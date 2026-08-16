@@ -10,6 +10,7 @@ class DockerContractTests(unittest.TestCase):
         dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
         self.assertIn("pip install --no-deps --editable apps/naqil", dockerfile)
         self.assertIn("naqil-boot", dockerfile)
+        self.assertIn('CMD ["web"]', dockerfile)
 
     def test_local_topology_contains_required_services(self):
         compose = (ROOT / "docker-compose.local.yml").read_text(encoding="utf-8")
@@ -19,6 +20,8 @@ class DockerContractTests(unittest.TestCase):
         ):
             self.assertIn(service, compose)
         self.assertNotIn("DB_ROOT_PASSWORD: naqil_", compose)
+        for service_mode in ("NAQIL_SERVICE: web", "NAQIL_SERVICE: websocket", "NAQIL_SERVICE: worker-short", "NAQIL_SERVICE: worker-long", "NAQIL_SERVICE: scheduler", "NAQIL_SERVICE: migrate"):
+            self.assertIn(service_mode, compose)
 
     def test_railway_map_requires_controlled_migration(self):
         service_map = (ROOT / "railway.service-map.md").read_text(encoding="utf-8")

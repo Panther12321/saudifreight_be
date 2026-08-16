@@ -1,16 +1,24 @@
 name: naqil-backend
 
+x-naqil-environment: &naqil-environment
+    SITE_NAME: ${SITE_NAME:-naqil.localhost}
+    SITE_DB_NAME: ${SITE_DB_NAME:-naqil}
+    SITE_DB_PASSWORD: ${SITE_DB_PASSWORD:?set SITE_DB_PASSWORD in .env}
+    DB_HOST: mariadb
+    DB_PORT: 3306
+    DB_ROOT_USER: root
+    DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in .env}
+    ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD in .env}
+    FRAPPE_ENCRYPTION_KEY: ${FRAPPE_ENCRYPTION_KEY:?set FRAPPE_ENCRYPTION_KEY in .env}
+    REDIS_CACHE: redis://redis-cache:6379
+    REDIS_QUEUE: redis://redis-queue:6379
+    REDIS_SOCKETIO: redis://redis-socketio:6379
+
 x-naqil-image: &naqil-image
   build:
     context: .
   image: naqil-backend:local
-  environment:
-    SITE_NAME: ${SITE_NAME:-naqil.localhost}
-    DB_HOST: mariadb
-    DB_PORT: 3306
-    REDIS_CACHE: redis://redis-cache:6379
-    REDIS_QUEUE: redis://redis-queue:6379
-    REDIS_SOCKETIO: redis://redis-socketio:6379
+  environment: *naqil-environment
   volumes:
     - sites:/home/frappe/frappe-bench/sites
 
@@ -37,31 +45,41 @@ services:
       - redis-cache
       - redis-queue
       - redis-socketio
-    command: ["bench", "start"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: web
 
   websocket:
     <<: *naqil-image
     depends_on:
       - redis-socketio
-    command: ["node", "/home/frappe/frappe-bench/apps/frappe/socketio.js"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: websocket
 
   worker-short:
     <<: *naqil-image
     depends_on:
       - redis-queue
-    command: ["bench", "worker", "--queue", "short,default"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: worker-short
 
   worker-long:
     <<: *naqil-image
     depends_on:
       - redis-queue
-    command: ["bench", "worker", "--queue", "long,default,short"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: worker-long
 
   scheduler:
     <<: *naqil-image
     depends_on:
       - redis-queue
-    command: ["bench", "schedule"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: scheduler
 
   migrate:
     <<: *naqil-image
@@ -69,7 +87,9 @@ services:
       - mariadb
       - redis-cache
       - redis-queue
-    command: ["naqil-migrate"]
+    environment:
+      <<: *naqil-environment
+      NAQIL_SERVICE: migrate
     restart: "no"
 
 volumes:

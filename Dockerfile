@@ -15,3 +15,4 @@ WORKDIR /home/frappe/frappe-bench
 RUN pip install --no-deps --editable apps/naqil
 
 ENTRYPOINT ["/usr/local/bin/naqil-boot"]
+CMD ["web"]
