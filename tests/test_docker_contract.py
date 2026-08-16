@@ -21,6 +21,8 @@ class DockerContractTests(unittest.TestCase):
         self.assertNotIn('echo "naqil" >>', boot_script)
         self.assertIn("chown -R frappe:frappe", boot_script)
         self.assertIn("runuser -u frappe", boot_script)
+        self.assertIn('write_combined_procfile', boot_script)
+        self.assertIn('cat > "${BENCH_PATH}/Procfile"', boot_script)
 
     def test_migration_uses_site_config_as_its_idempotency_marker(self):
         migrate_script = (ROOT / "docker" / "migrate.sh").read_text(encoding="utf-8")

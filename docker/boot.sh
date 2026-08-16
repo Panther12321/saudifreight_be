@@ -51,6 +51,15 @@ EOF
 EOF
 }
 
+write_combined_procfile() {
+  cat > "${BENCH_PATH}/Procfile" <<'EOF'
+web: gunicorn --chdir apps/frappe --bind 0.0.0.0:${PORT:-8000} --threads 4 --workers 2 --worker-class gthread --timeout 120 frappe.app:application
+socketio: node apps/frappe/socketio.js
+schedule: bench schedule
+worker: bench worker --queue short,default,long
+EOF
+}
+
 mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
 if ! grep -qxF "naqil" "${APPS_FILE}"; then
@@ -67,6 +76,7 @@ write_runtime_config
 
 case "${SERVICE_KIND}" in
   combined)
+    write_combined_procfile
     exec bench start
     ;;
   web)
