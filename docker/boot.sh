@@ -53,7 +53,7 @@ EOF
 
 write_combined_procfile() {
   cat > "${BENCH_PATH}/Procfile" <<'EOF'
-web: gunicorn --chdir apps/frappe --bind 0.0.0.0:${PORT:-8000} --threads 4 --workers 2 --worker-class gthread --timeout 120 frappe.app:application
+web: bench serve --port ${PORT:-8000}
 socketio: node apps/frappe/socketio.js
 schedule: bench schedule
 worker: bench worker --queue short,default,long
