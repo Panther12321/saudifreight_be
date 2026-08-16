@@ -12,12 +12,7 @@ set -euo pipefail
 BENCH_PATH="${FRAPPE_BENCH_PATH:-/home/frappe/frappe-bench}"
 cd "${BENCH_PATH}"
 
-site_database_exists() {
-  mysql --host="${DB_HOST}" --port="${DB_PORT}" --user="${DB_ROOT_USER}" --password="${DB_ROOT_PASSWORD}" --batch --skip-column-names \
-    --execute="SHOW DATABASES LIKE '${SITE_DB_NAME}'" | grep -qx "${SITE_DB_NAME}"
-}
-
-if ! site_database_exists; then
+if [[ ! -f "${BENCH_PATH}/sites/${SITE_NAME}/site_config.json" ]]; then
   bench new-site "${SITE_NAME}" \
     --db-name "${SITE_DB_NAME}" \
     --db-password "${SITE_DB_PASSWORD}" \
