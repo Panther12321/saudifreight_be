@@ -12,7 +12,9 @@ WORKDIR /home/frappe/frappe-bench
 
 # The Frappe image already provides framework dependencies. --no-deps avoids
 # replacing the framework package while registering this custom application.
-RUN pip install --no-deps --editable apps/naqil
+RUN pip install --no-deps --editable apps/naqil \
+  && python -c "import site; print('/home/frappe/frappe-bench/apps/naqil')" > "$(python -c 'import site; print(site.getsitepackages()[0])')/naqil.pth" \
+  && python -c "import naqil; print(naqil.__file__)"
 
 ENTRYPOINT ["/usr/local/bin/naqil-boot"]
 CMD ["combined"]

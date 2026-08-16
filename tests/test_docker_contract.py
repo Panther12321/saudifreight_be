@@ -9,6 +9,8 @@ class DockerContractTests(unittest.TestCase):
     def test_dockerfile_registers_app_without_dependency_reinstall(self):
         dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
         self.assertIn("pip install --no-deps --editable apps/naqil", dockerfile)
+        self.assertIn("naqil.pth", dockerfile)
+        self.assertIn("import naqil", dockerfile)
         self.assertIn("naqil-boot", dockerfile)
         self.assertIn('CMD ["combined"]', dockerfile)
 
