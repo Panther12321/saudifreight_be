@@ -14,6 +14,11 @@ class DockerContractTests(unittest.TestCase):
         self.assertIn("naqil-boot", dockerfile)
         self.assertIn('CMD ["combined"]', dockerfile)
 
+    def test_boot_script_prevents_app_name_concatenation(self):
+        boot_script = (ROOT / "docker" / "boot.sh").read_text(encoding="utf-8")
+        self.assertIn('printf "\\nnaqil\\n"', boot_script)
+        self.assertNotIn('echo "naqil" >>', boot_script)
+
     def test_local_topology_contains_required_services(self):
         compose = (ROOT / "docker-compose.local.yml").read_text(encoding="utf-8")
         for service in (

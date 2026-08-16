@@ -40,10 +40,10 @@ scheduler_events = {
 }
 
 doc_events = {
-    "Shipment Request": {
+    "Naqil Shipment": {
         "on_update": "naqil.events.shipments.on_shipment_update",
     },
-    "Carrier Bid": {
+    "Naqil Carrier Offer": {
         "after_insert": "naqil.events.auctions.on_bid_created",
     },
 }

@@ -47,7 +47,11 @@ EOF
 
 mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
-grep -qxF "naqil" "${APPS_FILE}" || echo "naqil" >> "${APPS_FILE}"
+if ! grep -qxF "naqil" "${APPS_FILE}"; then
+  # Base images may omit a terminal newline in apps.txt. Prefixing the entry
+  # with a newline prevents an invalid combined app name such as erpnextnaqil.
+  printf "\nnaqil\n" >> "${APPS_FILE}"
+fi
 
 if [[ "${SERVICE_KIND}" == "migrate" ]]; then
   exec /usr/local/bin/naqil-migrate
