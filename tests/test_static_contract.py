@@ -24,6 +24,13 @@ class NaqilStaticContractTests(unittest.TestCase):
                 payload = json.loads(file_path.read_text(encoding="utf-8"))
                 self.assertEqual(payload.get("doctype"), "DocType")
 
+    def test_every_doctype_has_a_controller_module(self):
+        for doctype_path in (MODULE / "doctype").iterdir():
+            if not doctype_path.is_dir() or doctype_path.name.startswith("__"):
+                continue
+            controller = doctype_path / f"{doctype_path.name}.py"
+            self.assertTrue(controller.is_file(), f"missing controller: {controller}")
+
     def test_legacy_erpnext_marketplace_doctypes_are_not_present(self):
         legacy = {
             "shipment_request",
