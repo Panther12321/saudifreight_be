@@ -6,6 +6,12 @@ SITES_PATH="${BENCH_PATH}/sites"
 APPS_FILE="${SITES_PATH}/apps.txt"
 SERVICE_KIND="${NAQIL_SERVICE:-${1:-web}}"
 
+if [[ "$(id -u)" == "0" ]]; then
+  mkdir -p "${SITES_PATH}"
+  chown -R frappe:frappe "${SITES_PATH}"
+  exec runuser -u frappe -- "$0" "$@"
+fi
+
 require_variable() {
   local key="$1"
   if [[ -z "${!key:-}" ]]; then

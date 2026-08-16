@@ -13,11 +13,14 @@ class DockerContractTests(unittest.TestCase):
         self.assertIn("import naqil", dockerfile)
         self.assertIn("naqil-boot", dockerfile)
         self.assertIn('CMD ["combined"]', dockerfile)
+        self.assertIn("USER root", dockerfile)
 
     def test_boot_script_prevents_app_name_concatenation(self):
         boot_script = (ROOT / "docker" / "boot.sh").read_text(encoding="utf-8")
         self.assertIn('printf "\\nnaqil\\n"', boot_script)
         self.assertNotIn('echo "naqil" >>', boot_script)
+        self.assertIn("chown -R frappe:frappe", boot_script)
+        self.assertIn("runuser -u frappe", boot_script)
 
     def test_migration_uses_site_config_as_its_idempotency_marker(self):
         migrate_script = (ROOT / "docker" / "migrate.sh").read_text(encoding="utf-8")

@@ -16,5 +16,6 @@ ENV PYTHONPATH="/home/frappe/frappe-bench/apps/naqil:${PYTHONPATH}"
 RUN pip install --no-deps --editable apps/naqil \
   && python -c "import naqil; print(naqil.__file__)"
 
+USER root
 ENTRYPOINT ["/usr/local/bin/naqil-boot"]
 CMD ["combined"]
