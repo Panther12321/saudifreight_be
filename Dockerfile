@@ -14,7 +14,8 @@ ENV PYTHONPATH="/home/frappe/frappe-bench/apps/naqil:${PYTHONPATH}"
 # The Frappe image already provides framework dependencies. --no-deps avoids
 # replacing the framework package while registering this custom application.
 RUN pip install --no-deps --editable apps/naqil \
-  && python -c "import naqil; print(naqil.__file__)"
+  && python -c "import naqil; print(naqil.__file__)" \
+  && test -x /home/frappe/frappe-bench/env/bin/gunicorn
 
 USER root
 ENTRYPOINT ["/usr/local/bin/naqil-boot"]
