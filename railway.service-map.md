@@ -1,6 +1,6 @@
 # Railway Service Map
 
-Railway imports multi-service Docker Compose as individual services. The backend must therefore be deployed as separate Railway services rather than as one long-lived Compose container.
+Railway imports multi-service Docker Compose as individual services. The production topology below is the preferred scalable design. The currently deployed starter configuration uses a single combined Frappe service because the available Railway plan permits only one application service alongside MariaDB and Redis.
 
 | Railway service | Image / command | Required private dependencies | Public exposure |
 |---|---|---|---|
@@ -26,3 +26,7 @@ The database and Redis services must be healthy before any Frappe service starts
 ## Files
 
 `docker-compose.local.yml` is for development topology verification. Railway uses the same image and service map, but actual Railway deployment settings are maintained as service configuration and protected variables.
+
+## Starter topology on Railway
+
+The starter deployment runs `NAQIL_SERVICE=combined` in one application service. It uses `bench start` to run the Frappe web process, Socket.IO, scheduler, and workers together. MariaDB has a persistent volume and Redis stays private. This is suitable only for initial review and controlled testing; it must be upgraded to the separate-service topology above before production transaction volume or time-critical auction operations.

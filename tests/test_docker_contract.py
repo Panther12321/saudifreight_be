@@ -10,7 +10,7 @@ class DockerContractTests(unittest.TestCase):
         dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
         self.assertIn("pip install --no-deps --editable apps/naqil", dockerfile)
         self.assertIn("naqil-boot", dockerfile)
-        self.assertIn('CMD ["web"]', dockerfile)
+        self.assertIn('CMD ["combined"]', dockerfile)
 
     def test_local_topology_contains_required_services(self):
         compose = (ROOT / "docker-compose.local.yml").read_text(encoding="utf-8")
@@ -27,6 +27,7 @@ class DockerContractTests(unittest.TestCase):
         service_map = (ROOT / "railway.service-map.md").read_text(encoding="utf-8")
         self.assertIn("controlled release step", service_map)
         self.assertIn("must not be retried blindly", service_map)
+        self.assertIn("Starter topology on Railway", service_map)
 
 
 if __name__ == "__main__":
