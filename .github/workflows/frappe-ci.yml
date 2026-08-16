@@ -28,7 +28,15 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*.py' -v
 
       - name: Validate Docker Compose topology
-        run: docker compose -f docker-compose.local.yml config --quiet
+        run: |
+          cat > .env <<'EOF'
+          SITE_DB_PASSWORD=ci-site-password
+          DB_ROOT_PASSWORD=ci-root-password
+          ADMIN_PASSWORD=ci-admin-password
+          FRAPPE_ENCRYPTION_KEY=ci-encryption-key-for-compose-validation
+          EOF
+          docker compose -f docker-compose.local.yml config --quiet
+          rm .env
 
       - name: Build the Naqil Frappe image
         run: docker build --pull --tag naqil-frappe:${{ github.sha }} .
