@@ -49,6 +49,10 @@ mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
 grep -qxF "naqil" "${APPS_FILE}" || echo "naqil" >> "${APPS_FILE}"
 
+if [[ "${SERVICE_KIND}" == "migrate" ]]; then
+  exec /usr/local/bin/naqil-migrate
+fi
+
 write_runtime_config
 
 case "${SERVICE_KIND}" in
@@ -66,9 +70,6 @@ case "${SERVICE_KIND}" in
     ;;
   scheduler)
     exec bench schedule
-    ;;
-  migrate)
-    exec /usr/local/bin/naqil-migrate
     ;;
   *)
     exec "$@"
