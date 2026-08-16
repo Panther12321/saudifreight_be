@@ -25,7 +25,9 @@ if [[ ! -f "${BENCH_PATH}/sites/${SITE_NAME}/site_config.json" ]]; then
 fi
 
 if ! bench --site "${SITE_NAME}" list-apps | grep -qx "naqil"; then
-  bench --site "${SITE_NAME}" install-app naqil
+  # A first install can create Module Def records before a transient worker
+  # failure. --force makes the operation resumable without recreating data.
+  bench --site "${SITE_NAME}" install-app naqil --force
 fi
 
 bench --site "${SITE_NAME}" migrate

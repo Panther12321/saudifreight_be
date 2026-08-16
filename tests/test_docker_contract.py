@@ -23,6 +23,7 @@ class DockerContractTests(unittest.TestCase):
         migrate_script = (ROOT / "docker" / "migrate.sh").read_text(encoding="utf-8")
         self.assertIn('sites/${SITE_NAME}/site_config.json', migrate_script)
         self.assertNotIn('SHOW DATABASES LIKE', migrate_script)
+        self.assertIn('install-app naqil --force', migrate_script)
 
     def test_local_topology_contains_required_services(self):
         compose = (ROOT / "docker-compose.local.yml").read_text(encoding="utf-8")
