@@ -60,6 +60,12 @@ worker: bench worker --queue short,default,long
 EOF
 }
 
+write_site_hostname_alias() {
+  if [[ -n "${SITE_HOSTNAME:-}" && "${SITE_HOSTNAME}" != "${SITE_NAME}" ]]; then
+    ln -sfn "${SITE_NAME}" "${SITES_PATH}/${SITE_HOSTNAME}"
+  fi
+}
+
 mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
 if ! grep -qxF "naqil" "${APPS_FILE}"; then
@@ -73,6 +79,7 @@ if [[ "${SERVICE_KIND}" == "migrate" ]]; then
 fi
 
 write_runtime_config
+write_site_hostname_alias
 
 case "${SERVICE_KIND}" in
   combined)

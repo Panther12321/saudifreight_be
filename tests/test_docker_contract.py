@@ -24,6 +24,8 @@ class DockerContractTests(unittest.TestCase):
         self.assertIn('write_combined_procfile', boot_script)
         self.assertIn('cat > "${BENCH_PATH}/Procfile"', boot_script)
         self.assertIn('/home/frappe/frappe-bench/env/bin/gunicorn', boot_script)
+        self.assertIn('write_site_hostname_alias', boot_script)
+        self.assertIn('ln -sfn "${SITE_NAME}"', boot_script)
 
     def test_migration_uses_site_config_as_its_idempotency_marker(self):
         migrate_script = (ROOT / "docker" / "migrate.sh").read_text(encoding="utf-8")
