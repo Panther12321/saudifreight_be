@@ -1,0 +1,39 @@
+name: Naqil Frappe CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Frappe package and Docker image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run static backend contract tests
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+
+      - name: Validate Docker Compose topology
+        run: docker compose -f docker-compose.local.yml config --quiet
+
+      - name: Build the Naqil Frappe image
+        run: docker build --pull --tag naqil-frappe:${{ github.sha }} .
+
+      - name: Verify the packaged Naqil module
+        run: |
+          docker run --rm --entrypoint python naqil-frappe:${{ github.sha }} \
+            -c "import naqil; print(naqil.__file__)"
