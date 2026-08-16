@@ -1,0 +1,77 @@
+name: naqil-backend
+
+x-naqil-image: &naqil-image
+  build:
+    context: .
+  image: naqil-backend:local
+  environment:
+    SITE_NAME: ${SITE_NAME:-naqil.localhost}
+    DB_HOST: mariadb
+    DB_PORT: 3306
+    REDIS_CACHE: redis://redis-cache:6379
+    REDIS_QUEUE: redis://redis-queue:6379
+    REDIS_SOCKETIO: redis://redis-socketio:6379
+  volumes:
+    - sites:/home/frappe/frappe-bench/sites
+
+services:
+  mariadb:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?set DB_ROOT_PASSWORD in .env}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  redis-cache:
+    image: redis:7-alpine
+  redis-queue:
+    image: redis:7-alpine
+  redis-socketio:
+    image: redis:7-alpine
+
+  backend:
+    <<: *naqil-image
+    depends_on:
+      - mariadb
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    command: ["bench", "start"]
+
+  websocket:
+    <<: *naqil-image
+    depends_on:
+      - redis-socketio
+    command: ["node", "/home/frappe/frappe-bench/apps/frappe/socketio.js"]
+
+  worker-short:
+    <<: *naqil-image
+    depends_on:
+      - redis-queue
+    command: ["bench", "worker", "--queue", "short,default"]
+
+  worker-long:
+    <<: *naqil-image
+    depends_on:
+      - redis-queue
+    command: ["bench", "worker", "--queue", "long,default,short"]
+
+  scheduler:
+    <<: *naqil-image
+    depends_on:
+      - redis-queue
+    command: ["bench", "schedule"]
+
+  migrate:
+    <<: *naqil-image
+    depends_on:
+      - mariadb
+      - redis-cache
+      - redis-queue
+    command: ["naqil-migrate"]
+    restart: "no"
+
+volumes:
+  sites:
+  mariadb-data:

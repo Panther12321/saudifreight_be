@@ -1,0 +1,2 @@
+# Runtime dependencies are provided by the pinned Frappe Framework image.
+# Add an external dependency only after compatibility and security review.

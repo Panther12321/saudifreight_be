@@ -1,0 +1,10 @@
+[
+  {"doctype": "Role", "role_name": "Naqil Administrator", "desk_access": 1},
+  {"doctype": "Role", "role_name": "Naqil Operations Manager", "desk_access": 1},
+  {"doctype": "Role", "role_name": "Naqil Verification Reviewer", "desk_access": 1},
+  {"doctype": "Role", "role_name": "Naqil Finance Officer", "desk_access": 1},
+  {"doctype": "Role", "role_name": "Naqil Support Agent", "desk_access": 1},
+  {"doctype": "Role", "role_name": "Naqil Customer", "desk_access": 0},
+  {"doctype": "Role", "role_name": "Naqil Carrier", "desk_access": 0},
+  {"doctype": "Role", "role_name": "Naqil Fleet Manager", "desk_access": 1}
+]

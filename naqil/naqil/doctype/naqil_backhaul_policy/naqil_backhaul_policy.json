@@ -1,0 +1,30 @@
+{
+  "name": "Naqil Backhaul Policy",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:BACK-POL-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "policy_name",
+  "fields": [
+    {"fieldname": "policy_name", "fieldtype": "Data", "label": "Policy Name", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "policy_version", "fieldtype": "Data", "label": "Policy Version", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Draft\nActive\nRetired", "default": "Draft", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "effective_from", "fieldtype": "Datetime", "label": "Effective From"},
+    {"fieldname": "eligibility_section", "fieldtype": "Section Break", "label": "Eligibility and Visibility"},
+    {"fieldname": "requires_carrier_verification", "fieldtype": "Check", "label": "Require Carrier Verification", "default": 1},
+    {"fieldname": "requires_marketplace_opt_in", "fieldtype": "Check", "label": "Require Marketplace Opt-In", "default": 1},
+    {"fieldname": "show_backhaul_label", "fieldtype": "Check", "label": "Show Backhaul Label to Customer", "default": 1},
+    {"fieldname": "limits_section", "fieldtype": "Section Break", "label": "Market Balance Limits"},
+    {"fieldname": "minimum_price_ratio", "fieldtype": "Percent", "label": "Minimum Price Ratio (%)", "default": 60, "reqd": 1},
+    {"fieldname": "maximum_price_ratio", "fieldtype": "Percent", "label": "Maximum Price Ratio (%)", "default": 100, "reqd": 1},
+    {"fieldname": "max_detour_km", "fieldtype": "Int", "label": "Maximum Detour (KM)", "default": 50, "reqd": 1},
+    {"fieldname": "max_matches_per_trip", "fieldtype": "Int", "label": "Maximum Matches Per Trip", "default": 3, "reqd": 1},
+    {"fieldname": "alert_on_market_imbalance", "fieldtype": "Check", "label": "Alert Operations on Market Imbalance", "default": 1},
+    {"fieldname": "change_summary", "fieldtype": "Small Text", "label": "Change Summary", "reqd": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Operations Manager", "read": 1},
+    {"role": "Naqil Finance Officer", "read": 1}
+  ]
+}

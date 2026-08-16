@@ -1,0 +1,31 @@
+{
+  "name": "Naqil Backhaul Capacity",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:CAP-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "carrier_organization",
+  "fields": [
+    {"fieldname": "carrier_organization", "fieldtype": "Link", "label": "Carrier Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "policy", "fieldtype": "Link", "label": "Backhaul Policy", "options": "Naqil Backhaul Policy", "read_only": 1},
+    {"fieldname": "policy_version", "fieldtype": "Data", "label": "Policy Version", "read_only": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Available\nReserved\nCompleted\nCancelled\nExpired", "default": "Available", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "marketplace_opt_in", "fieldtype": "Check", "label": "Marketplace Opt-In", "default": 0},
+    {"fieldname": "route_section", "fieldtype": "Section Break", "label": "Route"},
+    {"fieldname": "origin_city", "fieldtype": "Data", "label": "Origin City", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "destination_city", "fieldtype": "Data", "label": "Destination City", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "available_from", "fieldtype": "Datetime", "label": "Available From", "reqd": 1},
+    {"fieldname": "available_until", "fieldtype": "Datetime", "label": "Available Until", "reqd": 1},
+    {"fieldname": "vehicle_type", "fieldtype": "Data", "label": "Vehicle Type", "reqd": 1},
+    {"fieldname": "vehicle_reference", "fieldtype": "Data", "label": "Vehicle Reference"},
+    {"fieldname": "capacity_weight_kg", "fieldtype": "Float", "label": "Available Weight (KG)", "reqd": 1},
+    {"fieldname": "capacity_volume_cbm", "fieldtype": "Float", "label": "Available Volume (CBM)"},
+    {"fieldname": "minimum_price", "fieldtype": "Currency", "label": "Minimum Price (SAR)"}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Operations Manager", "read": 1, "write": 1, "create": 1},
+    {"role": "Naqil Carrier", "read": 1, "write": 1, "create": 1},
+    {"role": "Naqil Fleet Manager", "read": 1, "write": 1, "create": 1}
+  ]
+}

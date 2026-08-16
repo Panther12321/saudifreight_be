@@ -1,0 +1,27 @@
+{
+  "name": "Naqil Settlement",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:SET-.YYYY.-.#####",
+  "track_changes": 1,
+  "fields": [
+    {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "carrier_organization", "fieldtype": "Link", "label": "Carrier Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "invoice", "fieldtype": "Link", "label": "Invoice", "options": "Naqil Invoice", "reqd": 1},
+    {"fieldname": "escrow_case", "fieldtype": "Link", "label": "Escrow Case", "options": "Naqil Escrow Case"},
+    {"fieldname": "gross_amount", "fieldtype": "Currency", "label": "Gross Amount", "reqd": 1},
+    {"fieldname": "commission_amount", "fieldtype": "Currency", "label": "Commission Amount", "reqd": 1},
+    {"fieldname": "net_amount", "fieldtype": "Currency", "label": "Net Settlement Amount", "read_only": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Pending\nOn Hold\nReady for Settlement\nSettled\nFailed\nCancelled", "default": "Pending", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "settlement_reference", "fieldtype": "Data", "label": "Settlement Reference"},
+    {"fieldname": "settled_on", "fieldtype": "Datetime", "label": "Settled On"},
+    {"fieldname": "notes", "fieldtype": "Small Text", "label": "Notes"}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Finance Officer", "read": 1, "write": 1, "create": 1},
+    {"role": "Naqil Operations Manager", "read": 1},
+    {"role": "Naqil Carrier", "read": 1},
+    {"role": "Naqil Fleet Manager", "read": 1}
+  ]
+}

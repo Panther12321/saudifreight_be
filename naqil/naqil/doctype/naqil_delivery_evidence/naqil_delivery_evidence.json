@@ -1,0 +1,26 @@
+{
+  "name": "Naqil Delivery Evidence",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:POD-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "shipment",
+  "fields": [
+    {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "carrier_organization", "fieldtype": "Link", "label": "Carrier Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "signed_document", "fieldtype": "Attach", "label": "Signed Delivery Document", "reqd": 1},
+    {"fieldname": "recipient_name", "fieldtype": "Data", "label": "Recipient Name", "reqd": 1},
+    {"fieldname": "delivered_at", "fieldtype": "Datetime", "label": "Delivered At", "reqd": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Submitted\nCustomer Confirmed\nOperations Accepted\nRejected\nDisputed", "default": "Submitted", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "customer_confirmed_by", "fieldtype": "Link", "label": "Customer Confirmed By", "options": "User", "read_only": 1},
+    {"fieldname": "customer_confirmed_on", "fieldtype": "Datetime", "label": "Customer Confirmed On", "read_only": 1},
+    {"fieldname": "operations_notes", "fieldtype": "Small Text", "label": "Operations Notes", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Operations Manager", "read": 1, "write": 1},
+    {"role": "Naqil Customer", "read": 1, "write": 1},
+    {"role": "Naqil Carrier", "read": 1, "create": 1},
+    {"role": "Naqil Fleet Manager", "read": 1, "create": 1}
+  ]
+}

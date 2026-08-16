@@ -1,0 +1,33 @@
+# Python and Frappe artefacts
+__pycache__/
+*.py[cod]
+*.so
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and Bench state
+env/
+venv/
+sites/
+logs/
+node_modules/
+
+# Local secrets and Railway state
+.env
+.env.*
+!.env.example
+.railway/
+
+# Editor files
+.DS_Store
+.idea/
+.vscode/
+.claude/
+.agents/
+skills-lock.json
+
+# Temporary agent work tracking
+todo.md

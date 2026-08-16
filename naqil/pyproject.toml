@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "naqil"
+version = "0.1.0"
+description = "Naqil freight marketplace and fleet SaaS backend for Frappe"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "Naqil Platform", email = "admin@naqil.sa" },
+]
+license = { text = "MIT" }
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["naqil*"]
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<16.0.0"

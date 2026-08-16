@@ -1,0 +1,21 @@
+{
+  "name": "Naqil Platform Settings",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "issingle": 1,
+  "track_changes": 1,
+  "fields": [
+    {"fieldname": "financial_section", "fieldtype": "Section Break", "label": "Financial Controls"},
+    {"fieldname": "default_commission_rate", "fieldtype": "Percent", "label": "Default Commission Rate (%)", "default": 5, "reqd": 1},
+    {"fieldname": "payment_validity_hours", "fieldtype": "Int", "label": "Payment Validity (Hours)", "default": 24, "reqd": 1},
+    {"fieldname": "settlement_hold_hours", "fieldtype": "Int", "label": "Settlement Hold (Hours)", "default": 24, "reqd": 1},
+    {"fieldname": "delivery_section", "fieldtype": "Section Break", "label": "Delivery Controls"},
+    {"fieldname": "require_customer_delivery_confirmation", "fieldtype": "Check", "label": "Require Customer Delivery Confirmation", "default": 1},
+    {"fieldname": "allow_operations_delivery_exception", "fieldtype": "Check", "label": "Allow Audited Operations Exception", "default": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1},
+    {"role": "Naqil Operations Manager", "read": 1},
+    {"role": "Naqil Finance Officer", "read": 1}
+  ]
+}

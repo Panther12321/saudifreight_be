@@ -1,0 +1,22 @@
+{
+  "name": "Naqil Escrow Case",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:ESC-.YYYY.-.#####",
+  "track_changes": 1,
+  "fields": [
+    {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "invoice", "fieldtype": "Link", "label": "Invoice", "options": "Naqil Invoice", "reqd": 1},
+    {"fieldname": "payment_reference", "fieldtype": "Link", "label": "Payment Reference", "options": "Naqil Payment Reference"},
+    {"fieldname": "amount", "fieldtype": "Currency", "label": "Amount", "reqd": 1},
+    {"fieldname": "provider_name", "fieldtype": "Data", "label": "Provider Name"},
+    {"fieldname": "provider_case_reference", "fieldtype": "Data", "label": "Provider Case Reference"},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Escrow Status", "options": "Not Required\nPending Provider\nReserved\nHeld\nReleased\nRefunded\nCancelled", "default": "Not Required", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "status_reason", "fieldtype": "Small Text", "label": "Status Reason"}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Finance Officer", "read": 1, "write": 1, "create": 1},
+    {"role": "Naqil Operations Manager", "read": 1}
+  ]
+}

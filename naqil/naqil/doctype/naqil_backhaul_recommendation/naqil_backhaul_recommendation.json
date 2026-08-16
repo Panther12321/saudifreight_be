@@ -1,0 +1,22 @@
+{
+  "name": "Naqil Backhaul Recommendation",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:REC-.YYYY.-.#####",
+  "track_changes": 1,
+  "fields": [
+    {"fieldname": "capacity", "fieldtype": "Link", "label": "Backhaul Capacity", "options": "Naqil Backhaul Capacity", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "policy", "fieldtype": "Link", "label": "Backhaul Policy", "options": "Naqil Backhaul Policy", "reqd": 1},
+    {"fieldname": "match_score", "fieldtype": "Percent", "label": "Match Score (%)", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "explanation", "fieldtype": "Small Text", "label": "Explanation", "reqd": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Suggested\nAccepted\nDismissed\nExpired", "default": "Suggested", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "created_on", "fieldtype": "Datetime", "label": "Created On", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Operations Manager", "read": 1, "write": 1},
+    {"role": "Naqil Carrier", "read": 1},
+    {"role": "Naqil Fleet Manager", "read": 1}
+  ]
+}

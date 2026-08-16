@@ -1,0 +1,34 @@
+{
+  "name": "Naqil",
+  "module": "Naqil",
+  "label": "ناقل - Naqil",
+  "icon": "truck",
+  "type": "module",
+  "is_hidden": 0,
+  "public": 0,
+  "shortcuts": [
+    {"label": "New Shipment", "link_to": "Naqil Shipment", "type": "DocType", "color": "Blue", "icon": "plus"},
+    {"label": "Open Auctions", "link_to": "Naqil Shipment", "type": "DocType", "color": "Orange", "icon": "list"},
+    {"label": "Verification Queue", "link_to": "Naqil Verification Case", "type": "DocType", "color": "Yellow", "icon": "check"},
+    {"label": "Backhaul Capacity", "link_to": "Naqil Backhaul Capacity", "type": "DocType", "color": "Purple", "icon": "map-pin"},
+    {"label": "Platform Settings", "link_to": "Naqil Platform Settings", "type": "DocType", "color": "Gray", "icon": "settings"}
+  ],
+  "links": [
+    {"label": "Marketplace Operations", "type": "Card Break"},
+    {"label": "Shipments", "link_to": "Naqil Shipment", "type": "DocType", "onboard": 1},
+    {"label": "Carrier Offers", "link_to": "Naqil Carrier Offer", "type": "DocType", "onboard": 1},
+    {"label": "Delivery Evidence", "link_to": "Naqil Delivery Evidence", "type": "DocType", "onboard": 1},
+    {"label": "Verification and Policy", "type": "Card Break"},
+    {"label": "Organizations", "link_to": "Naqil Organization", "type": "DocType", "onboard": 1},
+    {"label": "Memberships", "link_to": "Naqil Membership", "type": "DocType", "onboard": 1},
+    {"label": "Verification Cases", "link_to": "Naqil Verification Case", "type": "DocType", "onboard": 1},
+    {"label": "Verification Policies", "link_to": "Naqil Verification Policy", "type": "DocType", "onboard": 1},
+    {"label": "Backhaul Policies", "link_to": "Naqil Backhaul Policy", "type": "DocType", "onboard": 1},
+    {"label": "Backhaul Capacity", "link_to": "Naqil Backhaul Capacity", "type": "DocType", "onboard": 1},
+    {"label": "Finance", "type": "Card Break"},
+    {"label": "Invoices", "link_to": "Naqil Invoice", "type": "DocType", "onboard": 1},
+    {"label": "Payment References", "link_to": "Naqil Payment Reference", "type": "DocType", "onboard": 1},
+    {"label": "Escrow Cases", "link_to": "Naqil Escrow Case", "type": "DocType", "onboard": 1},
+    {"label": "Settlements", "link_to": "Naqil Settlement", "type": "DocType", "onboard": 1}
+  ]
+}

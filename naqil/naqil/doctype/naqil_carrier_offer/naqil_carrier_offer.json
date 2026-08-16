@@ -1,0 +1,29 @@
+{
+  "name": "Naqil Carrier Offer",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:OFR-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "shipment",
+  "fields": [
+    {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "carrier_organization", "fieldtype": "Link", "label": "Carrier Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "submitted_by", "fieldtype": "Link", "label": "Submitted By", "options": "User", "read_only": 1},
+    {"fieldname": "amount", "fieldtype": "Currency", "label": "Offer Amount (SAR)", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "estimated_pickup", "fieldtype": "Datetime", "label": "Estimated Pickup", "reqd": 1},
+    {"fieldname": "estimated_delivery", "fieldtype": "Datetime", "label": "Estimated Delivery", "reqd": 1},
+    {"fieldname": "vehicle_type", "fieldtype": "Data", "label": "Vehicle Type", "reqd": 1},
+    {"fieldname": "vehicle_reference", "fieldtype": "Data", "label": "Vehicle Reference"},
+    {"fieldname": "offer_notes", "fieldtype": "Small Text", "label": "Offer Notes"},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Submitted\nAwarded\nNot Selected\nWithdrawn\nExpired", "default": "Submitted", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "submitted_on", "fieldtype": "Datetime", "label": "Submitted On", "read_only": 1},
+    {"fieldname": "awarded_on", "fieldtype": "Datetime", "label": "Awarded On", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Operations Manager", "read": 1},
+    {"role": "Naqil Customer", "read": 1},
+    {"role": "Naqil Carrier", "read": 1, "write": 1, "create": 1},
+    {"role": "Naqil Fleet Manager", "read": 1, "write": 1, "create": 1}
+  ]
+}

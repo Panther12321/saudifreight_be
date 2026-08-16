@@ -1,0 +1,28 @@
+{
+  "name": "Naqil Verification Case",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:VER-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "organization",
+  "fields": [
+    {"fieldname": "organization", "fieldtype": "Link", "label": "Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "verification_policy", "fieldtype": "Link", "label": "Verification Policy", "options": "Naqil Verification Policy", "reqd": 1, "read_only": 1},
+    {"fieldname": "policy_version", "fieldtype": "Data", "label": "Policy Version", "reqd": 1, "read_only": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Open\nUnder Review\nAction Required\nVerified\nRejected\nExpired", "default": "Open", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "opened_on", "fieldtype": "Datetime", "label": "Opened On", "read_only": 1},
+    {"fieldname": "reviewed_by", "fieldtype": "Link", "label": "Reviewed By", "options": "User", "read_only": 1},
+    {"fieldname": "reviewed_on", "fieldtype": "Datetime", "label": "Reviewed On", "read_only": 1},
+    {"fieldname": "decision_reason", "fieldtype": "Small Text", "label": "Decision Reason", "read_only": 1},
+    {"fieldname": "evidence_section", "fieldtype": "Section Break", "label": "Evidence"},
+    {"fieldname": "evidence_summary", "fieldtype": "Small Text", "label": "Evidence Summary", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Verification Reviewer", "read": 1, "write": 1},
+    {"role": "Naqil Operations Manager", "read": 1},
+    {"role": "Naqil Customer", "read": 1, "create": 1},
+    {"role": "Naqil Carrier", "read": 1, "create": 1},
+    {"role": "Naqil Fleet Manager", "read": 1, "create": 1}
+  ]
+}

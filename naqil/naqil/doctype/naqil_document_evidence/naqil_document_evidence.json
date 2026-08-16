@@ -1,0 +1,27 @@
+{
+  "name": "Naqil Document Evidence",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:DOC-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "document_label",
+  "fields": [
+    {"fieldname": "organization", "fieldtype": "Link", "label": "Organization", "options": "Naqil Organization", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "verification_case", "fieldtype": "Link", "label": "Verification Case", "options": "Naqil Verification Case", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "requirement_code", "fieldtype": "Data", "label": "Requirement Code", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "document_label", "fieldtype": "Data", "label": "Document Label", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "document_file", "fieldtype": "Attach", "label": "Private Document", "reqd": 1},
+    {"fieldname": "expiry_date", "fieldtype": "Date", "label": "Expiry Date"},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Submitted\nAccepted\nRejected\nExpired", "default": "Submitted", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "review_notes", "fieldtype": "Small Text", "label": "Review Notes", "read_only": 1},
+    {"fieldname": "reviewed_by", "fieldtype": "Link", "label": "Reviewed By", "options": "User", "read_only": 1},
+    {"fieldname": "reviewed_on", "fieldtype": "Datetime", "label": "Reviewed On", "read_only": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Verification Reviewer", "read": 1, "write": 1},
+    {"role": "Naqil Customer", "read": 1, "create": 1},
+    {"role": "Naqil Carrier", "read": 1, "create": 1},
+    {"role": "Naqil Fleet Manager", "read": 1, "create": 1}
+  ]
+}

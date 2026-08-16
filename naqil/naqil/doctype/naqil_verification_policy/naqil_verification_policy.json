@@ -1,0 +1,23 @@
+{
+  "name": "Naqil Verification Policy",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "autoname": "format:VER-POL-.YYYY.-.#####",
+  "track_changes": 1,
+  "title_field": "policy_name",
+  "fields": [
+    {"fieldname": "policy_name", "fieldtype": "Data", "label": "Policy Name", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "policy_version", "fieldtype": "Data", "label": "Policy Version", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Draft\nActive\nRetired", "default": "Draft", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "effective_from", "fieldtype": "Datetime", "label": "Effective From"},
+    {"fieldname": "grace_period_days", "fieldtype": "Int", "label": "Grace Period (Days)", "default": 0},
+    {"fieldname": "requirements_section", "fieldtype": "Section Break", "label": "Requirements"},
+    {"fieldname": "requirements", "fieldtype": "Table", "label": "Requirements", "options": "Naqil Policy Requirement", "reqd": 1},
+    {"fieldname": "change_summary", "fieldtype": "Small Text", "label": "Change Summary", "reqd": 1}
+  ],
+  "permissions": [
+    {"role": "Naqil Administrator", "read": 1, "write": 1, "create": 1, "delete": 1},
+    {"role": "Naqil Verification Reviewer", "read": 1},
+    {"role": "Naqil Operations Manager", "read": 1}
+  ]
+}
