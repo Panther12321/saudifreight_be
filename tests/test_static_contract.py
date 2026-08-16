@@ -7,11 +7,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = ROOT / "naqil" / "naqil"
+MODULE = APP / "naqil"
 
 
 class NaqilStaticContractTests(unittest.TestCase):
+    def test_frappe_module_layout_is_standard(self):
+        self.assertTrue((MODULE / "__init__.py").is_file())
+        self.assertTrue((MODULE / "doctype").is_dir())
+        self.assertTrue((MODULE / "workspace").is_dir())
+
     def test_doctype_json_is_valid(self):
-        files = list((APP / "doctype").rglob("*.json"))
+        files = list((MODULE / "doctype").rglob("*.json"))
         self.assertGreaterEqual(len(files), 14)
         for file_path in files:
             with self.subTest(file=file_path):
@@ -27,7 +33,7 @@ class NaqilStaticContractTests(unittest.TestCase):
             "backhaul_trip",
             "naqil_settings",
         }
-        current = {path.name for path in (APP / "doctype").iterdir() if path.is_dir()}
+        current = {path.name for path in (MODULE / "doctype").iterdir() if path.is_dir()}
         self.assertFalse(legacy.intersection(current))
 
     def test_application_code_has_no_permission_bypass(self):
