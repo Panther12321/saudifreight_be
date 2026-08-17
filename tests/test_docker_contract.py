@@ -23,7 +23,9 @@ class DockerContractTests(unittest.TestCase):
         self.assertIn("runuser -u frappe", boot_script)
         self.assertIn('write_combined_procfile', boot_script)
         self.assertIn('cat > "${BENCH_PATH}/Procfile"', boot_script)
-        self.assertIn('/home/frappe/frappe-bench/env/bin/gunicorn', boot_script)
+        self.assertIn("nginx -c /home/frappe/frappe-bench/nginx.conf", boot_script)
+        self.assertIn("web: bench serve --port 8001", boot_script)
+        self.assertIn("X-Frappe-Site-Name ${SITE_NAME}", boot_script)
         self.assertIn('write_site_hostname_alias', boot_script)
         self.assertIn('ln -sfn "${SITE_NAME}"', boot_script)
 

@@ -28,7 +28,7 @@ def provision_service_user():
             }
         )
         service_user.flags.no_welcome_email = True
-        service_user.insert(ignore_permissions=True)
+        service_user.insert()
 
     # The previous bridge credential was created against Administrator. Removing
     # its key invalidates that token pair before the dedicated credential is used.
@@ -37,7 +37,7 @@ def provision_service_user():
 
     service_user = frappe.get_doc("User", SERVICE_USER)
     service_user.api_key = None
-    service_user.save(ignore_permissions=True)
+    service_user.save()
     frappe.db.commit()
 
     return generate_keys(SERVICE_USER)
