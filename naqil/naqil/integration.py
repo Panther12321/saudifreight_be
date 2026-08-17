@@ -52,7 +52,7 @@ def provision_service_user():
 
 def ensure_naqil_workspace():
     """Create or refresh the Naqil Desk workspace in the active Frappe site."""
-    workspace_file = Path(__file__).parent / "naqil" / "workspace" / "naqil.json"
+    workspace_file = Path(__file__).parent / "naqil" / "workspace" / "naqil" / "naqil.json"
     with workspace_file.open(encoding="utf-8") as handle:
         data = json.load(handle)
 
