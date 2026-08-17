@@ -95,6 +95,8 @@ def portal_submit_verification_document(organization, requirement_code, document
             case_name = case.name
             frappe.db.set_value("Naqil Organization", organization, "verification_case", case_name)
 
+        verification_case = frappe.get_doc("Naqil Verification Case", case_name)
+
         evidence = frappe.get_doc(
             {
                 "doctype": "Naqil Document Evidence",
@@ -110,7 +112,7 @@ def portal_submit_verification_document(organization, requirement_code, document
         evidence.insert()
 
         applicant = frappe.get_doc("Naqil Organization", organization)
-        policy = frappe.get_doc("Naqil Verification Policy", case.verification_policy)
+        policy = frappe.get_doc("Naqil Verification Policy", verification_case.verification_policy)
         required_codes = {
             requirement.requirement_code
             for requirement in policy.requirements
