@@ -11,6 +11,39 @@ def _limit(value, default=20, maximum=100):
     return max(1, min(cint(value or default), maximum))
 
 
+def _run_as_organization_owner(organization_name, callback):
+    owner_user = frappe.db.get_value("Naqil Organization", organization_name, "owner_user")
+    if not owner_user:
+        frappe.throw("The organization does not have an owner user.")
+
+    original_user = frappe.session.user
+    frappe.set_user(owner_user)
+    try:
+        return callback()
+    finally:
+        frappe.set_user(original_user)
+
+
+@frappe.whitelist()
+def portal_create_customer_shipment(customer_organization, **shipment_values):
+    """Create a shipment on behalf of an organization after server-side authorization."""
+    require_any_role("Naqil Administrator")
+
+    def create_shipment():
+        shipment_values.update(
+            {
+                "doctype": "Naqil Shipment",
+                "customer_organization": customer_organization,
+                "created_by_customer": frappe.session.user,
+            }
+        )
+        shipment = frappe.get_doc(shipment_values)
+        shipment.insert()
+        return {"name": shipment.name, "status": shipment.status}
+
+    return _run_as_organization_owner(customer_organization, create_shipment)
+
+
 @frappe.whitelist()
 def list_open_shipments(pickup_city=None, delivery_city=None, limit=20):
     filters = {"status": "Open for Bidding"}
