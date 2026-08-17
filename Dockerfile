@@ -18,7 +18,8 @@ ENV PYTHONPATH="/home/frappe/frappe-bench/apps/naqil:${PYTHONPATH}"
 # replacing the framework package while registering this custom application.
 RUN pip install --no-deps --editable apps/naqil \
   && python -c "import naqil; print(naqil.__file__)" \
-  && test -x /home/frappe/frappe-bench/env/bin/gunicorn
+  && test -x /home/frappe/frappe-bench/env/bin/gunicorn \
+  && bench build --app naqil
 
 USER root
 ENTRYPOINT ["/usr/local/bin/naqil-boot"]
