@@ -57,7 +57,7 @@ def ensure_naqil_workspace():
         data = json.load(handle)
 
     data["doctype"] = "Workspace"
-    data.setdefault("title", data["label"])
+    data["title"] = "Naqil Backend"
     data["name"] = "Naqil Backend"
     data["route"] = "naqil-backend"
     data["public"] = 1
@@ -66,7 +66,7 @@ def ensure_naqil_workspace():
         workspace.update(data)
         workspace.save(ignore_permissions=True)
     else:
-        legacy_workspace = frappe.db.get_value("Workspace", {"title": data["title"]}, "name")
+        legacy_workspace = frappe.db.get_value("Workspace", {"label": data["label"]}, "name")
         if legacy_workspace:
             frappe.delete_doc("Workspace", legacy_workspace, ignore_permissions=True, force=True)
         workspace = frappe.get_doc(data)
