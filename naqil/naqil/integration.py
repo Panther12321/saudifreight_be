@@ -58,8 +58,11 @@ def ensure_naqil_workspace():
 
     data["doctype"] = "Workspace"
     data.setdefault("title", data["label"])
-    if frappe.db.exists("Workspace", data["name"]):
-        workspace = frappe.get_doc("Workspace", data["name"])
+    data["route"] = "naqil-backend"
+    data["public"] = 1
+    existing_workspace = frappe.db.get_value("Workspace", {"title": data["title"]}, "name")
+    if existing_workspace:
+        workspace = frappe.get_doc("Workspace", existing_workspace)
         workspace.update(data)
         workspace.save(ignore_permissions=True)
     else:
