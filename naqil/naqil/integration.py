@@ -5,6 +5,9 @@ They are deliberately not Frappe RPC endpoints and must never be exposed to the
 public web client.
 """
 
+import json
+from pathlib import Path
+
 import frappe
 from frappe.core.doctype.user.user import generate_keys
 
@@ -45,3 +48,20 @@ def provision_service_user():
     frappe.db.commit()
 
     return generate_keys(SERVICE_USER)
+
+
+def ensure_naqil_workspace():
+    """Create or refresh the Naqil Desk workspace in the active Frappe site."""
+    workspace_file = Path(__file__).parent / "naqil" / "workspace" / "naqil.json"
+    with workspace_file.open(encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    data["doctype"] = "Workspace"
+    if frappe.db.exists("Workspace", data["name"]):
+        workspace = frappe.get_doc("Workspace", data["name"])
+        workspace.update(data)
+    else:
+        workspace = frappe.get_doc(data)
+    workspace.save(ignore_permissions=True)
+    frappe.db.commit()
+    return {"name": workspace.name, "label": workspace.label, "route": frappe.scrub(workspace.name)}
