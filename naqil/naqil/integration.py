@@ -66,6 +66,9 @@ def ensure_naqil_workspace():
         workspace.update(data)
         workspace.save(ignore_permissions=True)
     else:
+        legacy_workspace = frappe.db.get_value("Workspace", {"title": data["title"]}, "name")
+        if legacy_workspace:
+            frappe.delete_doc("Workspace", legacy_workspace, ignore_permissions=True, force=True)
         workspace = frappe.get_doc(data)
         workspace.insert(ignore_permissions=True)
     frappe.db.commit()
