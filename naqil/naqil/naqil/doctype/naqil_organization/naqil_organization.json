@@ -17,6 +17,7 @@
     {"fieldname": "commercial_registration_number", "fieldtype": "Data", "label": "Commercial Registration Number"},
     {"fieldname": "transport_license_number", "fieldtype": "Data", "label": "Transport License Number"},
     {"fieldname": "transport_license_expiry_date", "fieldtype": "Date", "label": "Transport License Expiry Date"},
+    {"fieldname": "vehicle_registration_number", "fieldtype": "Data", "label": "Vehicle Registration Number"},
     {"fieldname": "vehicle_registration_expiry_date", "fieldtype": "Date", "label": "Vehicle Registration Expiry Date"},
     {"fieldname": "vat_number", "fieldtype": "Data", "label": "VAT Number"},
     {"fieldname": "contact_section", "fieldtype": "Section Break", "label": "Contact"},

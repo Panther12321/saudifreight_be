@@ -70,7 +70,7 @@ def portal_submit_carrier_offer(carrier_organization, shipment, amount, estimate
 
 
 @frappe.whitelist()
-def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None, identity_type=None):
+def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None, identity_type=None, document_number=None):
     """Persist a privately stored verification document under the active policy."""
     require_any_role("Naqil Administrator")
 
@@ -113,16 +113,21 @@ def portal_submit_verification_document(organization, requirement_code, document
 
         applicant = frappe.get_doc("Naqil Organization", organization)
         profile_updates = {}
+        if applicant.organization_type == "Carrier" and requirement_code in {"identity", "transport_license", "vehicle_registration"} and not (document_number or "").strip():
+            frappe.throw("Carrier document number is required.")
         if requirement_code == "identity":
             if applicant.organization_type == "Carrier" and identity_type not in {"National ID", "Iqama"}:
                 frappe.throw("Carrier identity type must be National ID or Iqama.")
             profile_updates["identity_expiry_date"] = expiry_date
+            profile_updates["identity_number"] = (document_number or "").strip()
             if identity_type:
                 profile_updates["identity_type"] = identity_type
         elif requirement_code == "transport_license":
             profile_updates["transport_license_expiry_date"] = expiry_date
+            profile_updates["transport_license_number"] = (document_number or "").strip()
         elif requirement_code == "vehicle_registration":
             profile_updates["vehicle_registration_expiry_date"] = expiry_date
+            profile_updates["vehicle_registration_number"] = (document_number or "").strip()
         if profile_updates:
             applicant.update(profile_updates)
             applicant.save()
@@ -159,6 +164,33 @@ def portal_submit_verification_document(organization, requirement_code, document
 
 
 @frappe.whitelist()
+def portal_update_carrier_document_metadata(organization, requirement_code, document_number, identity_type=None):
+    """Complete document metadata for an already-uploaded carrier document."""
+    require_any_role("Naqil Administrator")
+
+    def update_metadata():
+        applicant = frappe.get_doc("Naqil Organization", organization)
+        if applicant.organization_type != "Carrier":
+            frappe.throw("The requested organization is not a carrier.")
+        if requirement_code not in {"identity", "transport_license", "vehicle_registration"}:
+            frappe.throw("Invalid carrier document requirement.")
+        if not (document_number or "").strip():
+            frappe.throw("Carrier document number is required.")
+        if not frappe.db.exists("Naqil Document Evidence", {"organization": organization, "requirement_code": requirement_code}):
+            frappe.throw("Upload the document before saving its number.")
+        updates = {"identity": "identity_number", "transport_license": "transport_license_number", "vehicle_registration": "vehicle_registration_number"}
+        setattr(applicant, updates[requirement_code], document_number.strip())
+        if requirement_code == "identity":
+            if identity_type not in {"National ID", "Iqama"}:
+                frappe.throw("Carrier identity type must be National ID or Iqama.")
+            applicant.identity_type = identity_type
+        applicant.save()
+        return {"organization": applicant.name, "requirement_code": requirement_code}
+
+    return _run_as_organization_owner(organization, update_metadata)
+
+
+@frappe.whitelist()
 def list_carrier_applicants():
     """Return carrier organizations awaiting an administrative verification decision."""
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
@@ -190,7 +222,7 @@ def _get_verification_applicant(organization, organization_type):
     documents = frappe.get_all(
         "Naqil Document Evidence",
         filters={"organization": applicant.name},
-        fields=["name", "document_label", "document_file", "expiry_date", "status", "review_notes", "reviewed_by", "reviewed_on"],
+        fields=["name", "requirement_code", "document_label", "document_file", "expiry_date", "status", "review_notes", "reviewed_by", "reviewed_on"],
         order_by="creation asc",
     )
     verification = None
@@ -211,6 +243,7 @@ def _get_verification_applicant(organization, organization_type):
             "identity_expiry_date": applicant.identity_expiry_date,
             "transport_license_number": applicant.transport_license_number,
             "transport_license_expiry_date": applicant.transport_license_expiry_date,
+            "vehicle_registration_number": applicant.vehicle_registration_number,
             "vehicle_registration_expiry_date": applicant.vehicle_registration_expiry_date,
             "status": applicant.status,
             "status_reason": applicant.status_reason,
