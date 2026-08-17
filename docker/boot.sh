@@ -31,7 +31,10 @@ write_runtime_config() {
   require_variable REDIS_SOCKETIO
   require_variable FRAPPE_ENCRYPTION_KEY
 
-  mkdir -p "${SITES_PATH}/${SITE_NAME}/logs"
+  mkdir -p \
+    "${SITES_PATH}/${SITE_NAME}/logs" \
+    "${SITES_PATH}/${SITE_NAME}/private/files" \
+    "${SITES_PATH}/${SITE_NAME}/public/files"
   cat > "${SITES_PATH}/common_site_config.json" <<EOF
 {
   "db_host": "${DB_HOST}",
