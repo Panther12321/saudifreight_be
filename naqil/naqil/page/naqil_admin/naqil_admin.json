@@ -1,0 +1,14 @@
+{
+  "doctype": "Page",
+  "name": "naqil-admin",
+  "page_name": "naqil-admin",
+  "module": "Naqil",
+  "title": "إدارة ناقل",
+  "icon": "fa fa-truck",
+  "standard": "Yes",
+  "roles": [
+    {
+      "role": "System Manager"
+    }
+  ]
+}
