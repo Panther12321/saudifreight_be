@@ -60,8 +60,9 @@ def ensure_naqil_workspace():
     if frappe.db.exists("Workspace", data["name"]):
         workspace = frappe.get_doc("Workspace", data["name"])
         workspace.update(data)
+        workspace.save(ignore_permissions=True)
     else:
         workspace = frappe.get_doc(data)
-    workspace.save(ignore_permissions=True)
+        workspace.insert(ignore_permissions=True)
     frappe.db.commit()
     return {"name": workspace.name, "label": workspace.label, "route": frappe.scrub(workspace.name)}
