@@ -38,7 +38,8 @@ write_runtime_config() {
   "db_port": ${DB_PORT},
   "redis_cache": "${REDIS_CACHE}",
   "redis_queue": "${REDIS_QUEUE}",
-  "redis_socketio": "${REDIS_SOCKETIO}"
+  "redis_socketio": "${REDIS_SOCKETIO}",
+  "serve_default_site": true
 }
 EOF
   cat > "${SITES_PATH}/${SITE_NAME}/site_config.json" <<EOF
@@ -66,6 +67,10 @@ write_site_hostname_alias() {
   fi
 }
 
+write_default_site() {
+  printf "%s\n" "${SITE_NAME}" > "${SITES_PATH}/currentsite.txt"
+}
+
 mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
 if ! grep -qxF "naqil" "${APPS_FILE}"; then
@@ -79,6 +84,7 @@ if [[ "${SERVICE_KIND}" == "migrate" ]]; then
 fi
 
 write_runtime_config
+write_default_site
 write_site_hostname_alias
 
 case "${SERVICE_KIND}" in
