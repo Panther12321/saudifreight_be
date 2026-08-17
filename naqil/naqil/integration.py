@@ -10,6 +10,7 @@ from pathlib import Path
 
 import frappe
 from frappe.core.doctype.user.user import generate_keys
+from frappe.utils import now_datetime
 
 
 SERVICE_USER = "integration@naqil.internal"
@@ -73,3 +74,64 @@ def ensure_naqil_workspace():
         workspace.insert(ignore_permissions=True)
     frappe.db.commit()
     return {"name": workspace.name, "label": workspace.label, "route": frappe.scrub(workspace.name)}
+
+
+def ensure_default_verification_policy():
+    """Create the first active verification policy when the platform is new."""
+    active_policy = frappe.db.get_value(
+        "Naqil Verification Policy", {"status": "Active"}, "name"
+    )
+    if active_policy:
+        return {"name": active_policy, "created": False}
+
+    policy = frappe.get_doc(
+        {
+            "doctype": "Naqil Verification Policy",
+            "policy_name": "Initial Naqil Verification Policy",
+            "policy_version": "1.0",
+            "status": "Active",
+            "effective_from": now_datetime(),
+            "grace_period_days": 0,
+            "change_summary": "Initial policy required to review carrier and customer documents.",
+            "requirements": [
+                {
+                    "requirement_code": "identity_or_cr",
+                    "label": "الهوية أو السجل التجاري",
+                    "applies_to": "Customer",
+                    "document_type": "Identity or Commercial Registration",
+                    "is_mandatory": 1,
+                    "requires_expiry": 1,
+                },
+                {
+                    "requirement_code": "identity",
+                    "label": "الهوية",
+                    "applies_to": "Carrier",
+                    "document_type": "Identity",
+                    "is_mandatory": 1,
+                    "requires_expiry": 1,
+                    "blocks_bidding": 1,
+                },
+                {
+                    "requirement_code": "transport_license",
+                    "label": "رخصة النقل",
+                    "applies_to": "Carrier",
+                    "document_type": "Transport License",
+                    "is_mandatory": 1,
+                    "requires_expiry": 1,
+                    "blocks_bidding": 1,
+                },
+                {
+                    "requirement_code": "vehicle_registration",
+                    "label": "استمارة المركبة",
+                    "applies_to": "Carrier",
+                    "document_type": "Vehicle Registration",
+                    "is_mandatory": 1,
+                    "requires_expiry": 1,
+                    "blocks_bidding": 1,
+                },
+            ],
+        }
+    )
+    policy.insert(ignore_permissions=True)
+    frappe.db.commit()
+    return {"name": policy.name, "created": True}
