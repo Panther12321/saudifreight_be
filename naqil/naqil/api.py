@@ -114,6 +114,86 @@ def portal_submit_verification_document(organization, requirement_code, document
 
 
 @frappe.whitelist()
+def list_carrier_applicants():
+    """Return carrier organizations awaiting an administrative verification decision."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    return frappe.get_all(
+        "Naqil Organization",
+        filters={"organization_type": "Carrier", "status": "Pending Verification"},
+        fields=["name", "organization_name", "contact_name", "contact_phone", "city", "verification_case", "modified"],
+        order_by="modified desc",
+    )
+
+
+@frappe.whitelist()
+def get_carrier_applicant(organization):
+    """Return an applicant profile and its private verification documents for staff review."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    applicant = frappe.get_doc("Naqil Organization", organization)
+    if applicant.organization_type != "Carrier":
+        frappe.throw("The requested organization is not a carrier applicant.")
+
+    documents = frappe.get_all(
+        "Naqil Document Evidence",
+        filters={"organization": applicant.name},
+        fields=["name", "document_label", "document_file", "expiry_date", "status", "review_notes", "reviewed_by", "reviewed_on"],
+        order_by="creation asc",
+    )
+    verification = None
+    if applicant.verification_case:
+        verification = frappe.get_doc("Naqil Verification Case", applicant.verification_case).as_dict()
+
+    return {
+        "organization": {
+            "name": applicant.name,
+            "organization_name": applicant.organization_name,
+            "contact_name": applicant.contact_name,
+            "contact_phone": applicant.contact_phone,
+            "contact_email": applicant.contact_email,
+            "city": applicant.city,
+            "address": applicant.address,
+            "identity_number": applicant.identity_number,
+            "identity_expiry_date": applicant.identity_expiry_date,
+            "transport_license_number": applicant.transport_license_number,
+            "transport_license_expiry_date": applicant.transport_license_expiry_date,
+            "status": applicant.status,
+            "status_reason": applicant.status_reason,
+        },
+        "verification": verification,
+        "documents": documents,
+    }
+
+
+@frappe.whitelist()
+def review_carrier_applicant(organization, decision, reason=None):
+    """Approve or reject a carrier applicant after administrative document review."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    if decision not in {"approve", "reject"}:
+        frappe.throw("Invalid review decision.")
+
+    applicant = frappe.get_doc("Naqil Organization", organization)
+    if applicant.organization_type != "Carrier":
+        frappe.throw("The requested organization is not a carrier applicant.")
+    if not applicant.verification_case:
+        frappe.throw("The applicant has not submitted a verification case.")
+
+    documents = frappe.get_all("Naqil Document Evidence", filters={"organization": applicant.name}, fields=["name"])
+    if decision == "approve" and not documents:
+        frappe.throw("The applicant cannot be approved before uploading verification documents.")
+    if decision == "reject" and not (reason or "").strip():
+        frappe.throw("A rejection reason is required.")
+
+    verification = frappe.get_doc("Naqil Verification Case", applicant.verification_case)
+    verification.set_decision("Verified" if decision == "approve" else "Rejected", (reason or "").strip())
+    verification.save()
+
+    applicant.status = "Active" if decision == "approve" else "Suspended"
+    applicant.status_reason = "" if decision == "approve" else (reason or "").strip()
+    applicant.save()
+    return {"organization": applicant.name, "status": applicant.status, "verification_status": verification.status}
+
+
+@frappe.whitelist()
 def list_open_shipments(pickup_city=None, delivery_city=None, limit=20):
     filters = {"status": "Open for Bidding"}
     if pickup_city:
