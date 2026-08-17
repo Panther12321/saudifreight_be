@@ -20,6 +20,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
   const content = root.find(".naqil-admin-content");
   const escapeHtml = (value) => frappe.utils.escape_html(String(value || "—"));
   const displayDate = (value) => value ? frappe.datetime.str_to_user(value) : "غير محدد";
+  const displayIdentityType = (value) => value === "National ID" ? "هوية وطنية (سجل مدني)" : value === "Iqama" ? "إقامة" : "غير محدد";
   const printDocument = (url) => {
     const printable = window.open(url, "_blank");
     if (!printable) {
@@ -47,6 +48,10 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
       const data = response.message;
       const applicant = data.organization;
       const docs = data.documents || [];
+      const documentExpiry = (requirementCode) => docs.find((doc) => doc.requirement_code === requirementCode)?.expiry_date;
+      const identityExpiry = documentExpiry("identity") || applicant.identity_expiry_date;
+      const licenseExpiry = documentExpiry("transport_license") || applicant.transport_license_expiry_date;
+      const vehicleExpiry = documentExpiry("vehicle_registration") || applicant.vehicle_registration_expiry_date;
       const docsHtml = docs.length ? docs.map((doc) => `
         <div class="naqil-document-row">
           <div><strong>${escapeHtml(doc.document_label)}</strong><br><span>ينتهي: ${displayDate(doc.expiry_date)}</span></div>
@@ -58,7 +63,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
         <div class="naqil-applicant-header"><div><h3>${escapeHtml(applicant.organization_name)}</h3><p>${escapeHtml(applicant.name)}</p></div><span class="naqil-status">${escapeHtml(applicant.status)}</span></div>
         <section class="naqil-detail-card"><h4>بيانات ${options.applicantLabel}</h4><dl class="naqil-details-grid">
           <div><dt>الاسم</dt><dd>${escapeHtml(applicant.contact_name)}</dd></div><div><dt>الجوال</dt><dd>${escapeHtml(applicant.contact_phone)}</dd></div>
-          ${options.isCarrier ? `<div><dt>الهوية</dt><dd>${escapeHtml(applicant.identity_number)}</dd></div><div><dt>انتهاء الهوية</dt><dd>${displayDate(applicant.identity_expiry_date)}</dd></div><div><dt>رخصة النقل</dt><dd>${escapeHtml(applicant.transport_license_number)}</dd></div><div><dt>انتهاء الرخصة</dt><dd>${displayDate(applicant.transport_license_expiry_date)}</dd></div><div><dt>المدينة</dt><dd>${escapeHtml(applicant.city)}</dd></div><div><dt>العنوان</dt><dd>${escapeHtml(applicant.address)}</dd></div>` : ""}
+          ${options.isCarrier ? `<div><dt>نوع الهوية</dt><dd>${displayIdentityType(applicant.identity_type)}</dd></div><div><dt>انتهاء الهوية</dt><dd>${displayDate(identityExpiry)}</dd></div><div><dt>رخصة النقل</dt><dd>${escapeHtml(applicant.transport_license_number)}</dd></div><div><dt>انتهاء الرخصة</dt><dd>${displayDate(licenseExpiry)}</dd></div><div><dt>انتهاء استمارة المركبة</dt><dd>${displayDate(vehicleExpiry)}</dd></div><div><dt>المدينة</dt><dd>${escapeHtml(applicant.city)}</dd></div><div><dt>العنوان</dt><dd>${escapeHtml(applicant.address)}</dd></div>` : ""}
         </dl></section>
         <section class="naqil-detail-card"><h4>المستندات المرفوعة</h4>${docsHtml}</section>
         <section class="naqil-review-actions"><button class="btn btn-default naqil-print-profile">طباعة الملف</button><button class="btn btn-success naqil-approve">موافقة</button><button class="btn btn-danger naqil-reject">رفض</button></section>`);

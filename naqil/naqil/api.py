@@ -70,7 +70,7 @@ def portal_submit_carrier_offer(carrier_organization, shipment, amount, estimate
 
 
 @frappe.whitelist()
-def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None):
+def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None, identity_type=None):
     """Persist a privately stored verification document under the active policy."""
     require_any_role("Naqil Administrator")
 
@@ -112,6 +112,21 @@ def portal_submit_verification_document(organization, requirement_code, document
         evidence.insert()
 
         applicant = frappe.get_doc("Naqil Organization", organization)
+        profile_updates = {}
+        if requirement_code == "identity":
+            if applicant.organization_type == "Carrier" and identity_type not in {"National ID", "Iqama"}:
+                frappe.throw("Carrier identity type must be National ID or Iqama.")
+            profile_updates["identity_expiry_date"] = expiry_date
+            if identity_type:
+                profile_updates["identity_type"] = identity_type
+        elif requirement_code == "transport_license":
+            profile_updates["transport_license_expiry_date"] = expiry_date
+        elif requirement_code == "vehicle_registration":
+            profile_updates["vehicle_registration_expiry_date"] = expiry_date
+        if profile_updates:
+            applicant.update(profile_updates)
+            applicant.save()
+
         policy = frappe.get_doc("Naqil Verification Policy", verification_case.verification_policy)
         required_codes = {
             requirement.requirement_code
@@ -192,9 +207,11 @@ def _get_verification_applicant(organization, organization_type):
             "city": applicant.city,
             "address": applicant.address,
             "identity_number": applicant.identity_number,
+            "identity_type": applicant.identity_type,
             "identity_expiry_date": applicant.identity_expiry_date,
             "transport_license_number": applicant.transport_license_number,
             "transport_license_expiry_date": applicant.transport_license_expiry_date,
+            "vehicle_registration_expiry_date": applicant.vehicle_registration_expiry_date,
             "status": applicant.status,
             "status_reason": applicant.status_reason,
         },
