@@ -108,7 +108,35 @@ def portal_submit_verification_document(organization, requirement_code, document
             }
         )
         evidence.insert()
-        return {"name": evidence.name, "verification_case": case_name, "status": evidence.status}
+
+        applicant = frappe.get_doc("Naqil Organization", organization)
+        policy = frappe.get_doc("Naqil Verification Policy", case.verification_policy)
+        required_codes = {
+            requirement.requirement_code
+            for requirement in policy.requirements
+            if requirement.is_mandatory and requirement.applies_to == applicant.organization_type
+        }
+        submitted_codes = {
+            document.requirement_code
+            for document in frappe.get_all(
+                "Naqil Document Evidence",
+                filters={"organization": organization, "status": "Submitted"},
+                fields=["requirement_code"],
+            )
+        }
+        submitted_to_review = bool(required_codes) and required_codes.issubset(submitted_codes)
+        if submitted_to_review and applicant.status == "Draft":
+            applicant.status = "Pending Verification"
+            applicant.status_reason = ""
+            applicant.save()
+
+        return {
+            "name": evidence.name,
+            "verification_case": case_name,
+            "status": evidence.status,
+            "organization_status": applicant.status,
+            "submitted_to_review": submitted_to_review,
+        }
 
     return _run_as_organization_owner(organization, create_document)
 
