@@ -126,12 +126,21 @@ def list_carrier_applicants():
 
 
 @frappe.whitelist()
-def get_carrier_applicant(organization):
-    """Return an applicant profile and its private verification documents for staff review."""
+def list_customer_applicants():
+    """Return customer organizations awaiting an administrative verification decision."""
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    return frappe.get_all(
+        "Naqil Organization",
+        filters={"organization_type": "Customer", "status": "Pending Verification"},
+        fields=["name", "organization_name", "contact_name", "contact_phone", "verification_case", "modified"],
+        order_by="modified desc",
+    )
+
+
+def _get_verification_applicant(organization, organization_type):
     applicant = frappe.get_doc("Naqil Organization", organization)
-    if applicant.organization_type != "Carrier":
-        frappe.throw("The requested organization is not a carrier applicant.")
+    if applicant.organization_type != organization_type:
+        frappe.throw(f"The requested organization is not a {organization_type.lower()} applicant.")
 
     documents = frappe.get_all(
         "Naqil Document Evidence",
@@ -165,6 +174,20 @@ def get_carrier_applicant(organization):
 
 
 @frappe.whitelist()
+def get_carrier_applicant(organization):
+    """Return an applicant profile and its private verification documents for staff review."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    return _get_verification_applicant(organization, "Carrier")
+
+
+@frappe.whitelist()
+def get_customer_applicant(organization):
+    """Return a customer applicant profile and its private verification documents for staff review."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    return _get_verification_applicant(organization, "Customer")
+
+
+@frappe.whitelist()
 def review_carrier_applicant(organization, decision, reason=None):
     """Approve or reject a carrier applicant after administrative document review."""
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
@@ -174,6 +197,35 @@ def review_carrier_applicant(organization, decision, reason=None):
     applicant = frappe.get_doc("Naqil Organization", organization)
     if applicant.organization_type != "Carrier":
         frappe.throw("The requested organization is not a carrier applicant.")
+    if not applicant.verification_case:
+        frappe.throw("The applicant has not submitted a verification case.")
+
+    documents = frappe.get_all("Naqil Document Evidence", filters={"organization": applicant.name}, fields=["name"])
+    if decision == "approve" and not documents:
+        frappe.throw("The applicant cannot be approved before uploading verification documents.")
+    if decision == "reject" and not (reason or "").strip():
+        frappe.throw("A rejection reason is required.")
+
+    verification = frappe.get_doc("Naqil Verification Case", applicant.verification_case)
+    verification.set_decision("Verified" if decision == "approve" else "Rejected", (reason or "").strip())
+    verification.save()
+
+    applicant.status = "Active" if decision == "approve" else "Suspended"
+    applicant.status_reason = "" if decision == "approve" else (reason or "").strip()
+    applicant.save()
+    return {"organization": applicant.name, "status": applicant.status, "verification_status": verification.status}
+
+
+@frappe.whitelist()
+def review_customer_applicant(organization, decision, reason=None):
+    """Approve or reject a customer applicant after administrative document review."""
+    require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
+    if decision not in {"approve", "reject"}:
+        frappe.throw("Invalid review decision.")
+
+    applicant = frappe.get_doc("Naqil Organization", organization)
+    if applicant.organization_type != "Customer":
+        frappe.throw("The requested organization is not a customer applicant.")
     if not applicant.verification_case:
         frappe.throw("The applicant has not submitted a verification case.")
 
