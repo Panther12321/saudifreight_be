@@ -5,6 +5,8 @@ app_description = "Saudi Freight Marketplace and Fleet SaaS"
 app_email = "admin@naqil.sa"
 app_license = "MIT"
 
+app_include_js = "/assets/naqil/js/desk_menu.js"
+
 fixtures = [
     {
         "dt": "Role",
