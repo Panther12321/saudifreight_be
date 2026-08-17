@@ -57,6 +57,7 @@ def ensure_naqil_workspace():
         data = json.load(handle)
 
     data["doctype"] = "Workspace"
+    data.setdefault("title", data["label"])
     if frappe.db.exists("Workspace", data["name"]):
         workspace = frappe.get_doc("Workspace", data["name"])
         workspace.update(data)
