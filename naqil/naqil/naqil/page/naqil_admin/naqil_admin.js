@@ -19,6 +19,14 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
   const content = root.find(".naqil-admin-content");
   const escapeHtml = (value) => frappe.utils.escape_html(String(value || "—"));
   const displayDate = (value) => value ? frappe.datetime.str_to_user(value) : "غير محدد";
+  const printDocument = (url) => {
+    const printable = window.open(url, "_blank");
+    if (!printable) {
+      frappe.msgprint("يرجى السماح بالنوافذ المنبثقة لطباعة المستند.");
+      return;
+    }
+    printable.addEventListener("load", () => printable.print(), { once: true });
+  };
 
   const reviewApplicant = (organization, decision, reason) => {
     frappe.call({
@@ -41,7 +49,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
       const docsHtml = docs.length ? docs.map((doc) => `
         <div class="naqil-document-row">
           <div><strong>${escapeHtml(doc.document_label)}</strong><br><span>ينتهي: ${displayDate(doc.expiry_date)}</span></div>
-          <div class="naqil-document-actions"><span class="naqil-status">${escapeHtml(doc.status)}</span><a href="${encodeURI(doc.document_file)}" target="_blank" rel="noopener">فتح المستند</a></div>
+          <div class="naqil-document-actions"><span class="naqil-status">${escapeHtml(doc.status)}</span><a href="${encodeURI(doc.document_file)}" target="_blank" rel="noopener">فتح المستند</a><button class="btn btn-xs btn-default naqil-print-document" data-file="${encodeURI(doc.document_file)}">طباعة</button></div>
         </div>`).join("") : "<div class='naqil-empty-state'>لم يرفع المتقدم أي مستند حتى الآن.</div>";
 
       content.html(`
@@ -54,9 +62,11 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
           <div><dt>المدينة</dt><dd>${escapeHtml(applicant.city)}</dd></div><div><dt>العنوان</dt><dd>${escapeHtml(applicant.address)}</dd></div>
         </dl></section>
         <section class="naqil-detail-card"><h4>المستندات المرفوعة</h4>${docsHtml}</section>
-        <section class="naqil-review-actions"><button class="btn btn-success naqil-approve">موافقة</button><button class="btn btn-danger naqil-reject">رفض</button></section>`);
+        <section class="naqil-review-actions"><button class="btn btn-default naqil-print-profile">طباعة الملف</button><button class="btn btn-success naqil-approve">موافقة</button><button class="btn btn-danger naqil-reject">رفض</button></section>`);
 
       content.find(".naqil-back-button").on("click", renderApplicants);
+      content.find(".naqil-print-document").on("click", function () { printDocument($(this).data("file")); });
+      content.find(".naqil-print-profile").on("click", () => window.print());
       content.find(".naqil-approve").on("click", () => frappe.confirm("هل تؤكد الموافقة على هذا المتقدم؟", () => reviewApplicant(organization, "approve", "")));
       content.find(".naqil-reject").on("click", () => frappe.prompt([{ fieldname: "reason", fieldtype: "Small Text", label: "سبب الرفض", reqd: 1 }], (values) => reviewApplicant(organization, "reject", values.reason), "رفض الطلب", "تأكيد الرفض"));
     });
