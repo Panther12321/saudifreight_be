@@ -122,6 +122,13 @@ write_default_site() {
   printf "%s\n" "${SITE_NAME}" > "${SITES_PATH}/currentsite.txt"
 }
 
+sync_site_definitions() {
+  if [[ "${NAQIL_AUTO_MIGRATE:-1}" != "1" ]]; then
+    return
+  fi
+  bench --site "${SITE_NAME}" migrate
+}
+
 mkdir -p "$(dirname "${APPS_FILE}")"
 touch "${APPS_FILE}"
 if ! grep -qxF "naqil" "${APPS_FILE}"; then
@@ -137,6 +144,10 @@ fi
 write_runtime_config
 write_default_site
 write_site_hostname_alias
+
+if [[ "${SERVICE_KIND}" == "combined" ]]; then
+  sync_site_definitions
+fi
 
 case "${SERVICE_KIND}" in
   combined)
