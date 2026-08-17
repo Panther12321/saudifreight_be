@@ -25,6 +25,7 @@
     {"fieldname": "delivery_city", "fieldtype": "Data", "label": "Delivery City", "reqd": 1, "in_list_view": 1},
     {"fieldname": "delivery_address", "fieldtype": "Small Text", "label": "Delivery Address", "reqd": 1},
     {"fieldname": "delivery_window_end", "fieldtype": "Datetime", "label": "Delivery Deadline", "reqd": 1},
+    {"fieldname": "delivery_stops", "fieldtype": "Table", "label": "Delivery Stops", "options": "Naqil Delivery Stop"},
     {"fieldname": "cargo_description", "fieldtype": "Small Text", "label": "Cargo Description", "reqd": 1},
     {"fieldname": "cargo_weight_kg", "fieldtype": "Float", "label": "Cargo Weight (KG)", "reqd": 1},
     {"fieldname": "cargo_volume_cbm", "fieldtype": "Float", "label": "Cargo Volume (CBM)"},

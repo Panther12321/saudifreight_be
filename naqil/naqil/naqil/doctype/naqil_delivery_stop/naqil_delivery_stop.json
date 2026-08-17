@@ -1,0 +1,14 @@
+{
+  "name": "Naqil Delivery Stop",
+  "module": "Naqil",
+  "doctype": "DocType",
+  "istable": 1,
+  "fields": [
+    {"fieldname": "stop_sequence", "fieldtype": "Int", "label": "Stop Sequence", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "city", "fieldtype": "Data", "label": "Delivery City", "reqd": 1, "in_list_view": 1},
+    {"fieldname": "address", "fieldtype": "Small Text", "label": "Delivery Address", "reqd": 1},
+    {"fieldname": "latitude", "fieldtype": "Float", "label": "Latitude"},
+    {"fieldname": "longitude", "fieldtype": "Float", "label": "Longitude"},
+    {"fieldname": "delivery_deadline", "fieldtype": "Datetime", "label": "Delivery Deadline"}
+  ]
+}
