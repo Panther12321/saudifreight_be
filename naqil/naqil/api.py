@@ -45,6 +45,30 @@ def portal_create_customer_shipment(customer_organization, **shipment_values):
 
 
 @frappe.whitelist()
+def portal_submit_carrier_offer(carrier_organization, shipment, amount, estimated_pickup, estimated_delivery, vehicle_type, offer_notes=None):
+    """Submit a carrier offer as the verified carrier organization owner."""
+    require_any_role("Naqil Administrator")
+
+    def create_offer():
+        offer = frappe.get_doc(
+            {
+                "doctype": "Naqil Carrier Offer",
+                "shipment": shipment,
+                "carrier_organization": carrier_organization,
+                "amount": amount,
+                "estimated_pickup": estimated_pickup,
+                "estimated_delivery": estimated_delivery,
+                "vehicle_type": vehicle_type,
+                "offer_notes": offer_notes,
+            }
+        )
+        offer.insert()
+        return {"name": offer.name, "status": offer.status}
+
+    return _run_as_organization_owner(carrier_organization, create_offer)
+
+
+@frappe.whitelist()
 def list_open_shipments(pickup_city=None, delivery_city=None, limit=20):
     filters = {"status": "Open for Bidding"}
     if pickup_city:
