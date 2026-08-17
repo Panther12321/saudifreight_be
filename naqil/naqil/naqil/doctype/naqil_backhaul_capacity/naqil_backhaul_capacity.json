@@ -2,7 +2,7 @@
   "name": "Naqil Backhaul Capacity",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:CAP-.YYYY.-.#####",
+  "autoname": "format:CAP-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "carrier_organization",
   "fields": [

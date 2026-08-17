@@ -2,7 +2,7 @@
   "name": "Naqil Escrow Case",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:ESC-.YYYY.-.#####",
+  "autoname": "format:ESC-{YYYY}-{#####}",
   "track_changes": 1,
   "fields": [
     {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},

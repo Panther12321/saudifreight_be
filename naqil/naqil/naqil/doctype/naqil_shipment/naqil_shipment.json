@@ -2,7 +2,7 @@
   "name": "Naqil Shipment",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:SHP-.YYYY.-.#####",
+  "autoname": "format:SHP-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "shipment_title",
   "fields": [

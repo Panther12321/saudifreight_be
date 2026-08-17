@@ -2,7 +2,7 @@
   "name": "Naqil Invoice",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:INV-.YYYY.-.#####",
+  "autoname": "format:INV-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "shipment",
   "fields": [

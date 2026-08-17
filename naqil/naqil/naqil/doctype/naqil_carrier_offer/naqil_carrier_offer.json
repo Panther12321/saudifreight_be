@@ -2,7 +2,7 @@
   "name": "Naqil Carrier Offer",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:OFR-.YYYY.-.#####",
+  "autoname": "format:OFR-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "shipment",
   "fields": [

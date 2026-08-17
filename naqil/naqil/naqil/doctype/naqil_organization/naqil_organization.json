@@ -2,7 +2,7 @@
   "name": "Naqil Organization",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:ORG-.YYYY.-.#####",
+  "autoname": "format:ORG-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "organization_name",
   "fields": [

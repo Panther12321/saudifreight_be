@@ -2,7 +2,7 @@
   "name": "Naqil Membership",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:MEM-.YYYY.-.#####",
+  "autoname": "format:MEM-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "user",
   "fields": [

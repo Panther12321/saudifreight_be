@@ -2,7 +2,7 @@
   "name": "Naqil Delivery Evidence",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:POD-.YYYY.-.#####",
+  "autoname": "format:POD-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "shipment",
   "fields": [

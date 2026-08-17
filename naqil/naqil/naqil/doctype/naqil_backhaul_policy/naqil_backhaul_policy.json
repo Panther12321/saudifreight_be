@@ -2,7 +2,7 @@
   "name": "Naqil Backhaul Policy",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:BACK-POL-.YYYY.-.#####",
+  "autoname": "format:BACK-POL-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "policy_name",
   "fields": [

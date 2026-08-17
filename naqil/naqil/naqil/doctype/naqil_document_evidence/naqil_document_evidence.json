@@ -2,7 +2,7 @@
   "name": "Naqil Document Evidence",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:DOC-.YYYY.-.#####",
+  "autoname": "format:DOC-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "document_label",
   "fields": [

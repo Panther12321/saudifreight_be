@@ -2,7 +2,7 @@
   "name": "Naqil Backhaul Recommendation",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:REC-.YYYY.-.#####",
+  "autoname": "format:REC-{YYYY}-{#####}",
   "track_changes": 1,
   "fields": [
     {"fieldname": "capacity", "fieldtype": "Link", "label": "Backhaul Capacity", "options": "Naqil Backhaul Capacity", "reqd": 1, "in_list_view": 1},

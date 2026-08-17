@@ -2,7 +2,7 @@
   "name": "Naqil Payment Reference",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:PAYREF-.YYYY.-.#####",
+  "autoname": "format:PAYREF-{YYYY}-{#####}",
   "track_changes": 1,
   "fields": [
     {"fieldname": "invoice", "fieldtype": "Link", "label": "Invoice", "options": "Naqil Invoice", "reqd": 1, "in_list_view": 1},

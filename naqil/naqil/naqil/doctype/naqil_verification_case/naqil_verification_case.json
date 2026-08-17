@@ -2,7 +2,7 @@
   "name": "Naqil Verification Case",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:VER-.YYYY.-.#####",
+  "autoname": "format:VER-{YYYY}-{#####}",
   "track_changes": 1,
   "title_field": "organization",
   "fields": [

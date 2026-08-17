@@ -2,7 +2,7 @@
   "name": "Naqil Settlement",
   "module": "Naqil",
   "doctype": "DocType",
-  "autoname": "format:SET-.YYYY.-.#####",
+  "autoname": "format:SET-{YYYY}-{#####}",
   "track_changes": 1,
   "fields": [
     {"fieldname": "shipment", "fieldtype": "Link", "label": "Shipment", "options": "Naqil Shipment", "reqd": 1, "in_list_view": 1},
