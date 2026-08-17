@@ -4,6 +4,7 @@ import frappe
 from frappe.utils import cint, now_datetime
 
 from naqil.permissions import is_platform_staff, require_any_role, require_organization_access
+from naqil.policies import get_active_verification_policy
 from naqil.services.auction import award_offer, close_due_auction, issue_invoice
 
 
@@ -66,6 +67,50 @@ def portal_submit_carrier_offer(carrier_organization, shipment, amount, estimate
         return {"name": offer.name, "status": offer.status}
 
     return _run_as_organization_owner(carrier_organization, create_offer)
+
+
+@frappe.whitelist()
+def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None):
+    """Persist a privately stored verification document under the active policy."""
+    require_any_role("Naqil Administrator")
+
+    def create_document():
+        case_name = frappe.db.get_value(
+            "Naqil Verification Case",
+            {"organization": organization, "status": ["in", ["Open", "Under Review", "Action Required"]]},
+        )
+        if not case_name:
+            policy = get_active_verification_policy()
+            case = frappe.get_doc(
+                {
+                    "doctype": "Naqil Verification Case",
+                    "organization": organization,
+                    "verification_policy": policy.name,
+                    "policy_version": policy.policy_version,
+                    "status": "Open",
+                    "opened_on": now_datetime(),
+                }
+            )
+            case.insert()
+            case_name = case.name
+            frappe.db.set_value("Naqil Organization", organization, "verification_case", case_name)
+
+        evidence = frappe.get_doc(
+            {
+                "doctype": "Naqil Document Evidence",
+                "organization": organization,
+                "verification_case": case_name,
+                "requirement_code": requirement_code,
+                "document_label": document_label,
+                "document_file": document_file,
+                "expiry_date": expiry_date,
+                "status": "Submitted",
+            }
+        )
+        evidence.insert()
+        return {"name": evidence.name, "verification_case": case_name, "status": evidence.status}
+
+    return _run_as_organization_owner(organization, create_document)
 
 
 @frappe.whitelist()
