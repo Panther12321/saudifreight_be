@@ -31,7 +31,7 @@ write_runtime_config() {
   require_variable REDIS_SOCKETIO
   require_variable FRAPPE_ENCRYPTION_KEY
 
-  mkdir -p "${SITES_PATH}/${SITE_NAME}"
+  mkdir -p "${SITES_PATH}/${SITE_NAME}/logs"
   cat > "${SITES_PATH}/common_site_config.json" <<EOF
 {
   "db_host": "${DB_HOST}",
@@ -50,11 +50,59 @@ EOF
   "encryption_key": "${FRAPPE_ENCRYPTION_KEY}"
 }
 EOF
+  touch "${SITES_PATH}/${SITE_NAME}/logs/frappe.log"
 }
 
 write_combined_procfile() {
+  cat > "${BENCH_PATH}/nginx.conf" <<EOF
+pid /tmp/naqil-nginx.pid;
+error_log /dev/stderr warn;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+  access_log /dev/stdout;
+  client_body_temp_path /tmp/naqil-nginx-client;
+  proxy_temp_path /tmp/naqil-nginx-proxy;
+  fastcgi_temp_path /tmp/naqil-nginx-fastcgi;
+  uwsgi_temp_path /tmp/naqil-nginx-uwsgi;
+  scgi_temp_path /tmp/naqil-nginx-scgi;
+
+  server {
+    listen ${PORT:-8000};
+    server_name _;
+
+    location /socket.io {
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade \$http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_set_header Host \$host;
+      proxy_set_header X-Frappe-Site-Name ${SITE_NAME};
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+      proxy_pass http://127.0.0.1:9000;
+    }
+
+    location / {
+      proxy_http_version 1.1;
+      proxy_set_header Host \$host;
+      proxy_set_header X-Frappe-Site-Name ${SITE_NAME};
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+      proxy_read_timeout 120;
+      proxy_pass http://127.0.0.1:8001;
+    }
+  }
+}
+EOF
+
   cat > "${BENCH_PATH}/Procfile" <<'EOF'
-web: /home/frappe/frappe-bench/env/bin/gunicorn --chdir apps/frappe --bind 0.0.0.0:${PORT:-8000} --threads 4 --workers 2 --worker-class gthread --timeout 120 frappe.app:application
+proxy: nginx -c /home/frappe/frappe-bench/nginx.conf -g 'daemon off;'
+web: bench serve --port 8001
 socketio: node apps/frappe/socketio.js
 schedule: bench schedule
 worker: bench worker --queue short,default,long

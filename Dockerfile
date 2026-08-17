@@ -2,6 +2,9 @@ ARG FRAPPE_IMAGE=frappe/erpnext:v15
 FROM ${FRAPPE_IMAGE}
 
 USER root
+RUN apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends nginx \
+  && rm -rf /var/lib/apt/lists/*
 COPY --chown=frappe:frappe naqil /home/frappe/frappe-bench/apps/naqil
 COPY --chown=frappe:frappe docker/boot.sh /usr/local/bin/naqil-boot
 COPY --chown=frappe:frappe docker/migrate.sh /usr/local/bin/naqil-migrate
