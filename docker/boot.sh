@@ -39,7 +39,7 @@ write_runtime_config() {
   "redis_cache": "${REDIS_CACHE}",
   "redis_queue": "${REDIS_QUEUE}",
   "redis_socketio": "${REDIS_SOCKETIO}",
-  "serve_default_site": true
+  "default_site": "${SITE_NAME}"
 }
 EOF
   cat > "${SITES_PATH}/${SITE_NAME}/site_config.json" <<EOF
