@@ -7,7 +7,7 @@
   "is_hidden": 0,
   "public": 0,
   "shortcuts": [
-    {"label": "طلبات ناقلين جدد", "link_to": "Naqil Organization", "type": "DocType", "color": "Orange", "icon": "users"}
+    {"label": "السائقين", "link_to": "Naqil Organization", "type": "DocType", "color": "Orange", "icon": "users"}
   ],
   "links": []
 }
