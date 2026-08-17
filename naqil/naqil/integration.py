@@ -24,7 +24,7 @@ def provision_service_user():
                 "enabled": 1,
                 "user_type": "System User",
                 "send_welcome_email": 0,
-                "roles": [{"role": "Naqil Administrator"}],
+                "roles": [{"role": "Naqil Administrator"}, {"role": "System Manager"}],
             }
         )
         service_user.flags.no_welcome_email = True
@@ -36,6 +36,10 @@ def provision_service_user():
     frappe.db.commit()
 
     service_user = frappe.get_doc("User", SERVICE_USER)
+    existing_roles = {row.role for row in service_user.roles}
+    if "System Manager" not in existing_roles:
+        service_user.append("roles", {"role": "System Manager"})
+        service_user.save()
     service_user.api_key = None
     service_user.save()
     frappe.db.commit()
