@@ -113,21 +113,22 @@ def portal_submit_verification_document(organization, requirement_code, document
 
         applicant = frappe.get_doc("Naqil Organization", organization)
         profile_updates = {}
-        if applicant.organization_type == "Carrier" and requirement_code in {"identity", "transport_license", "vehicle_registration"} and not (document_number or "").strip():
-            frappe.throw("Carrier document number is required.")
         if requirement_code == "identity":
             if applicant.organization_type == "Carrier" and identity_type not in {"National ID", "Iqama"}:
                 frappe.throw("Carrier identity type must be National ID or Iqama.")
             profile_updates["identity_expiry_date"] = expiry_date
-            profile_updates["identity_number"] = (document_number or "").strip()
+            if (document_number or "").strip():
+                profile_updates["identity_number"] = document_number.strip()
             if identity_type:
                 profile_updates["identity_type"] = identity_type
         elif requirement_code == "transport_license":
             profile_updates["transport_license_expiry_date"] = expiry_date
-            profile_updates["transport_license_number"] = (document_number or "").strip()
+            if (document_number or "").strip():
+                profile_updates["transport_license_number"] = document_number.strip()
         elif requirement_code == "vehicle_registration":
             profile_updates["vehicle_registration_expiry_date"] = expiry_date
-            profile_updates["vehicle_registration_number"] = (document_number or "").strip()
+            if (document_number or "").strip():
+                profile_updates["vehicle_registration_number"] = document_number.strip()
         if profile_updates:
             applicant.update(profile_updates)
             applicant.save()
