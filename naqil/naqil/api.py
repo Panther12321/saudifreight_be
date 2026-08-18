@@ -193,12 +193,12 @@ def portal_update_carrier_document_metadata(organization, requirement_code, docu
 
 @frappe.whitelist()
 def list_carrier_applicants():
-    """Return carrier organizations awaiting an administrative verification decision."""
+    """Return carrier organizations for ongoing administrative supervision."""
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
     return frappe.get_all(
         "Naqil Organization",
-        filters={"organization_type": "Carrier", "status": "Pending Verification"},
-        fields=["name", "organization_name", "contact_name", "contact_phone", "city", "verification_case", "modified"],
+        filters={"organization_type": "Carrier", "status": ["in", ["Pending Verification", "Active", "Suspended"]]},
+        fields=["name", "organization_name", "contact_name", "contact_phone", "city", "status", "verification_case", "modified"],
         order_by="modified desc",
     )
 

@@ -58,6 +58,9 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
           <div class="naqil-document-actions"><span class="naqil-status">${escapeHtml(doc.status)}</span><a href="${encodeURI(doc.document_file)}" target="_blank" rel="noopener">فتح المستند</a><button class="btn btn-xs btn-default naqil-print-document" data-file="${encodeURI(doc.document_file)}">طباعة</button></div>
         </div>`).join("") : "<div class='naqil-empty-state'>لم يرفع المتقدم أي مستند حتى الآن.</div>";
 
+      const reviewActions = applicant.status === "Pending Verification"
+        ? `<section class="naqil-review-actions"><button class="btn btn-default naqil-print-profile">طباعة الملف</button><button class="btn btn-success naqil-approve">موافقة</button><button class="btn btn-danger naqil-reject">رفض</button></section>`
+        : `<section class="naqil-review-actions"><button class="btn btn-default naqil-print-profile">طباعة الملف</button><span class="naqil-status">${applicant.status === "Active" ? "ناقل معتمد" : "حساب موقوف"}</span></section>`;
       content.html(`
         <button class="btn btn-default naqil-back-button">عودة إلى الطلبات</button>
         <div class="naqil-applicant-header"><div><h3>${escapeHtml(applicant.organization_name)}</h3><p>${escapeHtml(applicant.name)}</p></div><span class="naqil-status">${escapeHtml(applicant.status)}</span></div>
@@ -66,7 +69,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
           ${options.isCarrier ? `<div><dt>نوع الهوية</dt><dd>${displayIdentityType(applicant.identity_type)}</dd></div><div><dt>رقم الهوية</dt><dd>${escapeHtml(applicant.identity_number)}</dd></div><div><dt>انتهاء الهوية</dt><dd>${displayDate(identityExpiry)}</dd></div><div><dt>رخصة النقل</dt><dd>${escapeHtml(applicant.transport_license_number)}</dd></div><div><dt>انتهاء الرخصة</dt><dd>${displayDate(licenseExpiry)}</dd></div><div><dt>رقم استمارة المركبة</dt><dd>${escapeHtml(applicant.vehicle_registration_number)}</dd></div><div><dt>انتهاء استمارة المركبة</dt><dd>${displayDate(vehicleExpiry)}</dd></div><div><dt>المدينة</dt><dd>${escapeHtml(applicant.city)}</dd></div><div><dt>العنوان</dt><dd>${escapeHtml(applicant.address)}</dd></div>` : ""}
         </dl></section>
         <section class="naqil-detail-card"><h4>المستندات المرفوعة</h4>${docsHtml}</section>
-        <section class="naqil-review-actions"><button class="btn btn-default naqil-print-profile">طباعة الملف</button><button class="btn btn-success naqil-approve">موافقة</button><button class="btn btn-danger naqil-reject">رفض</button></section>`);
+        ${reviewActions}`);
 
       content.find(".naqil-back-button").on("click", options.renderList);
       content.find(".naqil-print-document").on("click", function () { printDocument($(this).data("file")); });
@@ -88,7 +91,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
         return;
       }
       content.html(applicants.map((applicant) => `
-        <button class="naqil-applicant-card" data-organization="${escapeHtml(applicant.name)}"><span><strong>${escapeHtml(applicant.organization_name)}</strong><small>${escapeHtml(applicant.contact_name)} · ${options.isCarrier ? escapeHtml(applicant.city) : escapeHtml(applicant.contact_phone)}</small></span><span>فتح الملف</span></button>`).join(""));
+        <button class="naqil-applicant-card" data-organization="${escapeHtml(applicant.name)}"><span><strong>${escapeHtml(applicant.organization_name)}</strong><small>${escapeHtml(applicant.contact_name)} · ${options.isCarrier ? escapeHtml(applicant.city) : escapeHtml(applicant.contact_phone)}</small></span><span class="naqil-list-action"><span class="naqil-status">${applicant.status === "Active" ? "معتمد" : applicant.status === "Suspended" ? "موقوف" : "قيد المراجعة"}</span><small>فتح الملف</small></span></button>`).join(""));
       content.find(".naqil-applicant-card").on("click", function () { renderApplicant($(this).data("organization"), options); });
     });
   };
