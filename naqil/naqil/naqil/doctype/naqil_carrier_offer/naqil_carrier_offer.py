@@ -11,6 +11,23 @@ class NaqilCarrierOffer(Document):
         self.submitted_by = frappe.session.user
         self.submitted_on = now_datetime()
 
+    def after_insert(self):
+        offers = frappe.get_all(
+            "Naqil Carrier Offer",
+            filters={"shipment": self.shipment, "status": "Submitted"},
+            fields=["amount"],
+        )
+        amounts = [offer.amount for offer in offers]
+        frappe.db.set_value(
+            "Naqil Shipment",
+            self.shipment,
+            {
+                "offer_count": len(amounts),
+                "lowest_offer_amount": min(amounts) if amounts else None,
+            },
+            update_modified=False,
+        )
+
     def validate(self):
         shipment = frappe.get_doc("Naqil Shipment", self.shipment)
         shipment_auction_end = get_datetime(shipment.auction_end)

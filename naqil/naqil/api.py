@@ -70,6 +70,21 @@ def portal_submit_carrier_offer(carrier_organization, shipment, amount, estimate
 
 
 @frappe.whitelist()
+def portal_select_customer_offer(customer_organization, shipment, offer, rationale=None):
+    """Award an offer using the authenticated owner context of the shipper organization."""
+    require_any_role("Naqil Administrator")
+    shipment_doc = frappe.get_doc("Naqil Shipment", shipment)
+    if shipment_doc.customer_organization != customer_organization:
+        frappe.throw("The shipment does not belong to the specified customer organization.")
+
+    def select_offer():
+        awarded = award_offer(shipment, offer, rationale or "Selected by shipper")
+        return {"shipment": awarded.name, "status": awarded.status, "awarded_offer": awarded.awarded_offer}
+
+    return _run_as_organization_owner(customer_organization, select_offer)
+
+
+@frappe.whitelist()
 def portal_submit_verification_document(organization, requirement_code, document_label, document_file, expiry_date=None, identity_type=None, document_number=None):
     """Persist a privately stored verification document under the active policy."""
     require_any_role("Naqil Administrator")
@@ -205,12 +220,12 @@ def list_carrier_applicants():
 
 @frappe.whitelist()
 def list_customer_applicants():
-    """Return customer organizations awaiting an administrative verification decision."""
+    """Return customer organizations for ongoing administrative supervision."""
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
     return frappe.get_all(
         "Naqil Organization",
-        filters={"organization_type": "Customer", "status": "Pending Verification"},
-        fields=["name", "organization_name", "contact_name", "contact_phone", "verification_case", "modified"],
+        filters={"organization_type": "Customer", "status": ["in", ["Pending Verification", "Active", "Suspended"]]},
+        fields=["name", "organization_name", "contact_name", "contact_phone", "status", "verification_case", "modified"],
         order_by="modified desc",
     )
 

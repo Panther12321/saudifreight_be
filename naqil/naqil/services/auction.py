@@ -49,8 +49,8 @@ def award_offer(shipment_name, offer_name, rationale):
     shipment = _shipment(shipment_name, for_update=True)
     require_organization_access(shipment.customer_organization, {"Owner", "Operations", "Dispatcher"})
 
-    if shipment.status != "Selection Due":
-        frappe.throw("The auction must be closed before the customer selects an offer.")
+    if shipment.status not in {"Open for Bidding", "Selection Due"}:
+        frappe.throw("This shipment is not available for offer selection.")
 
     offer = frappe.get_doc("Naqil Carrier Offer", offer_name)
     if offer.shipment != shipment.name or offer.status not in {"Submitted", "Expired"}:
@@ -58,8 +58,7 @@ def award_offer(shipment_name, offer_name, rationale):
     if frappe.db.get_value("Naqil Organization", offer.carrier_organization, "status") != "Active":
         frappe.throw("The carrier organization is no longer active.")
 
-    if not rationale or len(rationale.strip()) < 3:
-        frappe.throw("The customer must provide an award rationale.")
+    rationale = (rationale or "Selected by shipper").strip()
 
     frappe.db.set_value(
         "Naqil Shipment",
@@ -68,7 +67,7 @@ def award_offer(shipment_name, offer_name, rationale):
             "status": "Awarded",
             "awarded_offer": offer.name,
             "carrier_organization": offer.carrier_organization,
-            "award_reason": rationale.strip(),
+            "award_reason": rationale,
             "awarded_on": now_datetime(),
         },
         update_modified=False,
