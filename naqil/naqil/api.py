@@ -212,7 +212,7 @@ def list_carrier_applicants():
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
     return frappe.get_all(
         "Naqil Organization",
-        filters={"organization_type": "Carrier", "status": ["in", ["Pending Verification", "Active", "Suspended"]]},
+        filters={"organization_type": "Carrier", "status": ["in", ["Draft", "Pending Verification", "Active", "Suspended"]]},
         fields=["name", "organization_name", "contact_name", "contact_phone", "city", "status", "verification_case", "modified"],
         order_by="modified desc",
     )
@@ -224,7 +224,7 @@ def list_customer_applicants():
     require_any_role("Naqil Administrator", "Naqil Verification Reviewer")
     return frappe.get_all(
         "Naqil Organization",
-        filters={"organization_type": "Customer", "status": ["in", ["Pending Verification", "Active", "Suspended"]]},
+        filters={"organization_type": "Customer", "status": ["in", ["Draft", "Pending Verification", "Active", "Suspended"]]},
         fields=["name", "organization_name", "contact_name", "contact_phone", "status", "verification_case", "modified"],
         order_by="modified desc",
     )
