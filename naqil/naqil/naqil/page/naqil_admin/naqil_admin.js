@@ -5,8 +5,8 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
     <div class="naqil-admin-shell" dir="rtl">
       <aside class="naqil-admin-sidebar" aria-label="قائمة إدارة ناقل">
         <div class="naqil-admin-brand">ناقل</div>
-        <button class="naqil-admin-nav-item is-active" type="button" data-route="drivers"><span class="fa fa-users"></span><span>السائقين</span></button>
-        <button class="naqil-admin-nav-item" type="button" data-route="customers"><span class="fa fa-building"></span><span>العملاء</span></button>
+        <button class="naqil-admin-nav-item is-active" type="button" data-route="drivers"><span class="fa fa-users"></span><span>سجل السائقين</span></button>
+        <button class="naqil-admin-nav-item" type="button" data-route="customers"><span class="fa fa-building"></span><span>سجل العملاء</span></button>
       </aside>
       <main class="naqil-admin-main">
         <span class="naqil-admin-eyebrow">إدارة ناقل</span>
@@ -21,6 +21,7 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
   const escapeHtml = (value) => frappe.utils.escape_html(String(value || "—"));
   const displayDate = (value) => value ? frappe.datetime.str_to_user(value) : "غير محدد";
   const displayIdentityType = (value) => value === "National ID" ? "هوية وطنية (سجل مدني)" : value === "Iqama" ? "إقامة" : "غير محدد";
+  const statusLabel = (status) => status === "Active" ? "معتمد" : status === "Suspended" ? "موقوف" : status === "Pending Verification" ? "قيد المراجعة" : "بانتظار الوثائق";
   const printDocument = (url) => {
     const printable = window.open(url, "_blank");
     if (!printable) {
@@ -87,17 +88,17 @@ frappe.pages["naqil-admin"].on_page_load = function (wrapper) {
     frappe.call({ method: options.listMethod }).then((response) => {
       const applicants = response.message || [];
       if (!applicants.length) {
-        content.html(`<div class='naqil-empty-state'>لا توجد طلبات ${options.pluralLabel} جديدة للمراجعة.</div>`);
+        content.html(`<div class='naqil-empty-state'>لا يوجد ${options.applicantLabel === "العميل" ? "عملاء" : "سائقين"} مسجلون حالياً.</div>`);
         return;
       }
-      content.html(applicants.map((applicant) => `
-        <button class="naqil-applicant-card" data-organization="${escapeHtml(applicant.name)}"><span><strong>${escapeHtml(applicant.organization_name)}</strong><small>${escapeHtml(applicant.contact_name)} · ${options.isCarrier ? escapeHtml(applicant.city) : escapeHtml(applicant.contact_phone)}</small></span><span class="naqil-list-action"><span class="naqil-status">${applicant.status === "Active" ? "معتمد" : applicant.status === "Suspended" ? "موقوف" : "قيد المراجعة"}</span><small>فتح الملف</small></span></button>`).join(""));
+        content.html(applicants.map((applicant) => `
+        <button class="naqil-applicant-card" data-organization="${escapeHtml(applicant.name)}"><span><strong>${escapeHtml(applicant.organization_name)}</strong><small>${escapeHtml(applicant.contact_name)} · ${options.isCarrier ? escapeHtml(applicant.city) : escapeHtml(applicant.contact_phone)}</small></span><span class="naqil-list-action"><span class="naqil-status">${statusLabel(applicant.status)}</span><small>فتح الملف</small></span></button>`).join(""));
       content.find(".naqil-applicant-card").on("click", function () { renderApplicant($(this).data("organization"), options); });
     });
   };
 
-  const driverOptions = { route: "drivers", heading: "السائقين", applicantLabel: "المتقدم", pluralLabel: "سائقين", isCarrier: true, listMethod: "naqil.api.list_carrier_applicants", getMethod: "naqil.api.get_carrier_applicant", reviewMethod: "naqil.api.review_carrier_applicant" };
-  const customerOptions = { route: "customers", heading: "العملاء", applicantLabel: "العميل", pluralLabel: "عملاء", isCarrier: false, listMethod: "naqil.api.list_customer_applicants", getMethod: "naqil.api.get_customer_applicant", reviewMethod: "naqil.api.review_customer_applicant" };
+  const driverOptions = { route: "drivers", heading: "سجل السائقين", applicantLabel: "السائق", pluralLabel: "سائقين", isCarrier: true, listMethod: "naqil.api.list_carrier_applicants", getMethod: "naqil.api.get_carrier_applicant", reviewMethod: "naqil.api.review_carrier_applicant" };
+  const customerOptions = { route: "customers", heading: "سجل العملاء", applicantLabel: "العميل", pluralLabel: "عملاء", isCarrier: false, listMethod: "naqil.api.list_customer_applicants", getMethod: "naqil.api.get_customer_applicant", reviewMethod: "naqil.api.review_customer_applicant" };
   driverOptions.renderList = () => renderApplicants(driverOptions);
   customerOptions.renderList = () => renderApplicants(customerOptions);
   root.find("[data-route='drivers']").on("click", driverOptions.renderList);
